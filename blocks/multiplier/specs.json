@@ -1,0 +1,42 @@
+{
+  "name": "SKY130 Gilbert Cell Four-Quadrant Multiplier",
+  "supply_v": 1.8,
+  "measurements": {
+    "linearity_error_pct": {
+      "target": "<5",
+      "weight": 30,
+      "unit": "%",
+      "description": "Max deviation from ideal V_out = K·Vx·Vy over full ±300mV input range"
+    },
+    "k_mult": {
+      "target": ">0.5",
+      "weight": 10,
+      "unit": "V⁻¹",
+      "description": "Multiplication gain constant: V_out_diff = K × Vx_diff × Vy_diff"
+    },
+    "output_offset_mv": {
+      "target": "<10",
+      "weight": 15,
+      "unit": "mV",
+      "description": "DC output offset when both inputs are zero"
+    },
+    "bw_mhz": {
+      "target": ">5",
+      "weight": 10,
+      "unit": "MHz",
+      "description": "3dB bandwidth of multiplication response"
+    },
+    "thd_pct": {
+      "target": "<2",
+      "weight": 20,
+      "unit": "%",
+      "description": "THD with 100kHz sine on X-input, DC on Y-input at ±200mV"
+    },
+    "power_uw": {
+      "target": "<300",
+      "weight": 15,
+      "unit": "µW",
+      "description": "Power consumption"
+    }
+  }
+}

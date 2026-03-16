@@ -1,0 +1,36 @@
+{
+  "name": "SKY130 Lorenz Core — Three Coupled ODE Channels",
+  "supply_v": 1.8,
+  "measurements": {
+    "trajectory_correlation": {
+      "target": ">0.90",
+      "weight": 30,
+      "unit": "",
+      "description": "Cross-correlation between analog x(t) and RK4 reference over first 5 Lyapunov times (~3.4 Lorenz time units)"
+    },
+    "attractor_two_lobed": {
+      "target": "=1",
+      "weight": 25,
+      "unit": "boolean",
+      "description": "Phase portrait x-z shows two distinct lobes (1=yes, 0=no)"
+    },
+    "lyapunov_positive": {
+      "target": "=1",
+      "weight": 15,
+      "unit": "boolean",
+      "description": "Estimated largest Lyapunov exponent is positive (1=yes, 0=no)"
+    },
+    "coefficient_error_pct": {
+      "target": "<10",
+      "weight": 15,
+      "unit": "%",
+      "description": "Max error in effective σ, ρ, β vs targets (measured from trajectory fitting)"
+    },
+    "power_mw": {
+      "target": "<3",
+      "weight": 15,
+      "unit": "mW",
+      "description": "Total power of the three-channel Lorenz core"
+    }
+  }
+}

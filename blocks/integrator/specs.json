@@ -1,0 +1,48 @@
+{
+  "name": "SKY130 Gm-C Integrator",
+  "supply_v": 1.8,
+  "measurements": {
+    "dc_gain_db": {
+      "target": ">60",
+      "weight": 20,
+      "unit": "dB",
+      "description": "DC gain of the integrator (Gm × Rout)"
+    },
+    "unity_gain_freq_mhz": {
+      "target": ">1",
+      "weight": 15,
+      "unit": "MHz",
+      "description": "Unity-gain frequency = Gm / (2π·C)"
+    },
+    "output_swing_mv": {
+      "target": ">300",
+      "weight": 20,
+      "unit": "mV",
+      "description": "Single-ended output swing from VCM before clipping (<1% THD)"
+    },
+    "leakage_mv_per_us": {
+      "target": "<1",
+      "weight": 15,
+      "unit": "mV/µs",
+      "description": "Output drift rate with zero input (integrator hold mode)"
+    },
+    "reset_time_ns": {
+      "target": "<10",
+      "weight": 10,
+      "unit": "ns",
+      "description": "Time to reset output to VCM (within 1% of final value)"
+    },
+    "charge_inject_mv": {
+      "target": "<5",
+      "weight": 10,
+      "unit": "mV",
+      "description": "Output voltage kick when reset switch opens (charge injection)"
+    },
+    "power_uw": {
+      "target": "<100",
+      "weight": 10,
+      "unit": "µW",
+      "description": "Power consumption"
+    }
+  }
+}

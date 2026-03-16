@@ -1,0 +1,42 @@
+{
+  "name": "SKY130 Analog ODE Solver — Full Integration",
+  "supply_v": 1.8,
+  "measurements": {
+    "lorenz_correlation": {
+      "target": ">0.90",
+      "weight": 25,
+      "unit": "",
+      "description": "End-to-end trajectory correlation vs RK4 reference (first 5 Lyapunov times)"
+    },
+    "butterfly_verified": {
+      "target": "=1",
+      "weight": 20,
+      "unit": "boolean",
+      "description": "x-z phase portrait shows butterfly attractor (verified by lobe detection)"
+    },
+    "chaos_duration_lorenz_units": {
+      "target": ">50",
+      "weight": 15,
+      "unit": "LTU",
+      "description": "System sustains chaotic oscillation for at least 50 Lorenz time units without saturating"
+    },
+    "total_power_mw": {
+      "target": "<5",
+      "weight": 15,
+      "unit": "mW",
+      "description": "Total system power including bias generation and output buffers"
+    },
+    "time_scale_factor": {
+      "target": ">1000",
+      "weight": 10,
+      "unit": "",
+      "description": "Real time / Lorenz time — analog speed advantage"
+    },
+    "pvt_chaos_survival": {
+      "target": ">80",
+      "weight": 15,
+      "unit": "%",
+      "description": "Percentage of PVT corners where chaos is sustained (attractor doesn't collapse)"
+    }
+  }
+}

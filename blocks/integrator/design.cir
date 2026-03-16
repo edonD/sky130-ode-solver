@@ -1,0 +1,27 @@
+* SKY130 Gm-C Integrator with Reset
+* Part of the Analog ODE Solver project
+*
+* Required interface (do not change port order):
+*   .subckt integrator inp inn outp outn reset vbias_n vcm vdd vss
+*
+* You design the internals. This is just a placeholder.
+
+.subckt integrator inp inn outp outn reset vbias_n vcm vdd vss
+
+* TODO: Design your integrator here.
+* Requirements:
+*   - Accumulate differential input current onto capacitors
+*   - Reset mechanism to force output to VCM
+*   - Low leakage, sufficient output swing (±300mV)
+*   - See specs.json for targets
+
+* Placeholder: bare caps + NMOS switches (replace with your design)
+.param C_int=5p W_sw=1u L_sw=0.15u
+
+Cp outp vcm {C_int}
+Cn outn vcm {C_int}
+
+XSW1 outp vcm reset vss sky130_fd_pr__nfet_01v8 W={W_sw} L={L_sw}
+XSW2 outn vcm reset vss sky130_fd_pr__nfet_01v8 W={W_sw} L={L_sw}
+
+.ends integrator

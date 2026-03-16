@@ -1,0 +1,42 @@
+{
+  "name": "SKY130 Programmable OTA (Gm Cell)",
+  "supply_v": 1.8,
+  "measurements": {
+    "gm_us": {
+      "target": ">50",
+      "weight": 20,
+      "unit": "µS",
+      "description": "Transconductance at nominal bias (mid-range programming)"
+    },
+    "gm_ratio": {
+      "target": ">30",
+      "weight": 20,
+      "unit": "",
+      "description": "Gm_max / Gm_min ratio — must cover σ=10, ρ=28, β=2.67, unity=1"
+    },
+    "thd_pct": {
+      "target": "<1",
+      "weight": 25,
+      "unit": "%",
+      "description": "Total harmonic distortion for ±200mV differential input at 100kHz"
+    },
+    "bw_mhz": {
+      "target": ">10",
+      "weight": 10,
+      "unit": "MHz",
+      "description": "3dB bandwidth — must be well above Lorenz time scale"
+    },
+    "dc_gain_db": {
+      "target": ">40",
+      "weight": 10,
+      "unit": "dB",
+      "description": "Open-loop DC gain"
+    },
+    "power_uw": {
+      "target": "<200",
+      "weight": 15,
+      "unit": "µW",
+      "description": "Power consumption per OTA cell at nominal bias"
+    }
+  }
+}

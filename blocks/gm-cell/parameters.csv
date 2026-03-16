@@ -1,0 +1,7 @@
+name,min,max,scale
+W1,0.42e-6,20e-6,log
+L1,0.15e-6,2e-6,log
+W_load,0.55e-6,20e-6,log
+L_load,0.15e-6,2e-6,log
+W_tail,0.42e-6,20e-6,log
+L_tail,0.15e-6,2e-6,log

@@ -1,0 +1,4 @@
+name,min,max,scale
+C_int,1e-12,20e-12,log
+W_sw,0.42e-6,5e-6,log
+L_sw,0.15e-6,1e-6,log

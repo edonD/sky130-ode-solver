@@ -1,0 +1,27 @@
+* SKY130 Programmable OTA (Gm Cell)
+* Part of the Analog ODE Solver project
+*
+* Required interface (do not change port order):
+*   .subckt gm_cell inp inn outp outn vbias_n vbias_p vcm vdd vss
+*
+* You design the internals. This is just a placeholder.
+
+.subckt gm_cell inp inn outp outn vbias_n vbias_p vcm vdd vss
+
+* TODO: Design your OTA here.
+* Requirements:
+*   - Differential voltage input (inp, inn) → differential current/voltage output (outp, outn)
+*   - Programmable Gm via vbias_n (tail current control)
+*   - Linear over ±300mV differential input
+*   - See specs.json for targets
+
+* Placeholder: simple diff pair (replace with your design)
+.param W1=2u L1=0.5u W_load=4u L_load=0.5u W_tail=4u L_tail=1u
+
+XM1 outn inp ns ns sky130_fd_pr__nfet_01v8 W={W1} L={L1}
+XM2 outp inn ns ns sky130_fd_pr__nfet_01v8 W={W1} L={L1}
+XMP1 outn outn vdd vdd sky130_fd_pr__pfet_01v8 W={W_load} L={L_load}
+XMP2 outp outn vdd vdd sky130_fd_pr__pfet_01v8 W={W_load} L={L_load}
+XMT ns vbias_n vss vss sky130_fd_pr__nfet_01v8 W={W_tail} L={L_tail}
+
+.ends gm_cell

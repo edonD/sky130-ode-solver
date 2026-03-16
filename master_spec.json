@@ -1,0 +1,77 @@
+{
+  "name": "SKY130 Analog ODE Solver — Lorenz Attractor",
+  "description": "Continuous-time analog computer that solves the Lorenz system of differential equations using SKY130 transistor-level circuits. Outputs chaotic attractors in real-time.",
+  "technology": "SkyWater SKY130 130nm CMOS",
+  "supply_v": 1.8,
+  "equations": {
+    "dx_dt": "sigma * (y - x)",
+    "dy_dt": "x * (rho - z) - y",
+    "dz_dt": "x * y - beta * z"
+  },
+  "lorenz_parameters": {
+    "sigma": 10,
+    "rho": 28,
+    "beta": 2.6667,
+    "note": "Classic chaotic regime. Coefficients implemented via gm ratios."
+  },
+  "signal_mapping": {
+    "description": "State variables x, y, z mapped to differential voltages around VCM=0.9V",
+    "v_cm": 0.9,
+    "v_swing": 0.3,
+    "note": "x,y,z each represented as V+ - V- centered at VCM, swing +/-300mV"
+  },
+  "blocks": {
+    "gm-cell": {
+      "repo": "blocks/gm-cell",
+      "parallel": true,
+      "depends_on": [],
+      "description": "Programmable-gain OTA for coefficient scaling (sigma, rho, beta, unity)"
+    },
+    "integrator": {
+      "repo": "blocks/integrator",
+      "parallel": true,
+      "depends_on": [],
+      "description": "Gm-C integrator with reset — the d/dt operator"
+    },
+    "multiplier": {
+      "repo": "blocks/multiplier",
+      "parallel": true,
+      "depends_on": [],
+      "description": "Gilbert cell analog multiplier for x*y and x*z cross-terms"
+    },
+    "lorenz-core": {
+      "repo": "blocks/lorenz-core",
+      "parallel": false,
+      "depends_on": ["gm-cell", "integrator", "multiplier"],
+      "description": "Three coupled ODE channels wired as the Lorenz system"
+    },
+    "integration": {
+      "repo": "blocks/integration",
+      "parallel": false,
+      "depends_on": ["lorenz-core"],
+      "description": "Full system with bias generation, output buffers, and end-to-end Lorenz validation"
+    }
+  },
+  "top_level_specs": {
+    "lorenz_trajectory_correlation": {
+      "target": ">0.90",
+      "description": "Cross-correlation between analog output and ideal RK4 reference over first 5 Lyapunov times"
+    },
+    "attractor_topology": {
+      "target": "two-lobed",
+      "description": "Phase portrait must show the characteristic butterfly shape with two distinct lobes"
+    },
+    "lyapunov_exponent_sign": {
+      "target": "positive",
+      "description": "Largest Lyapunov exponent must be positive, confirming chaotic dynamics"
+    },
+    "total_power_mw": {
+      "target": "<5",
+      "description": "Total power consumption during active computation"
+    },
+    "time_scale_factor": {
+      "target": ">1000",
+      "description": "Ratio of real time to Lorenz time — analog runs at least 1000x faster than unit-time"
+    }
+  }
+}
