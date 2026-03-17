@@ -1,0 +1,7 @@
+name,value
+C_mim_w,50e-6
+C_mim_l,50e-6
+W_nsw,25e-6
+L_nsw,0.15e-6
+W_psw,50e-6
+L_psw,0.15e-6

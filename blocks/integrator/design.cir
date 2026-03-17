@@ -1,5 +1,6 @@
 * SKY130 Gm-C Integrator with Transmission Gate Reset
 * Passive integrator: MIM caps + complementary TG reset switches
+* Uses LVT NMOS for switches to improve PVT coverage at low VDD
 * TG provides inherent charge injection cancellation (NMOS/PMOS cancel)
 *
 * MOSFET subcircuit pin order: d g s b (drain gate source bulk)
@@ -10,13 +11,13 @@
 
 * Parameters - tunable
 .param C_mim_w=50e-6 C_mim_l=50e-6
-.param W_nsw=25u L_nsw=0.15u
-.param W_psw=50u L_psw=0.15u
+.param W_nsw=55u L_nsw=0.15u
+.param W_psw=99u L_psw=0.15u
 
 * Generate reset_b (inverted reset) for PMOS switch gate
-* CMOS inverter: d g s b
-XMinv_n reset_b reset vss vss sky130_fd_pr__nfet_01v8 W=0.42u L=0.15u
-XMinv_p reset_b reset vdd vdd sky130_fd_pr__pfet_01v8 W=0.84u L=0.15u
+* Strong inverter to drive large switch gates fast: d g s b
+XMinv_n reset_b reset vss vss sky130_fd_pr__nfet_01v8 W=4u L=0.15u
+XMinv_p reset_b reset vdd vdd sky130_fd_pr__pfet_01v8 W=8u L=0.15u
 
 * ============================================================
 * Positive half: outp node
@@ -26,10 +27,9 @@ XMinv_p reset_b reset vdd vdd sky130_fd_pr__pfet_01v8 W=0.84u L=0.15u
 XCp outp vcm sky130_fd_pr__cap_mim_m3_1 W={C_mim_w} L={C_mim_l}
 
 * Transmission gate reset switch: connects outp to vcm when reset=1
-* Pin order: drain gate source bulk
-* NMOS: d=outp, g=reset, s=vcm, b=vss
-XSWp_n outp reset vcm vss sky130_fd_pr__nfet_01v8 W={W_nsw} L={L_nsw}
-* PMOS: d=outp, g=reset_b, s=vcm, b=vdd
+* NMOS LVT (lower Vth for better low-VDD performance): d g s b
+XSWp_n outp reset vcm vss sky130_fd_pr__nfet_01v8_lvt W={W_nsw} L={L_nsw}
+* Regular PFET (LVT not available at L=0.15u): d g s b
 XSWp_p outp reset_b vcm vdd sky130_fd_pr__pfet_01v8 W={W_psw} L={L_psw}
 
 * ============================================================
@@ -39,15 +39,12 @@ XSWp_p outp reset_b vcm vdd sky130_fd_pr__pfet_01v8 W={W_psw} L={L_psw}
 * Integration capacitor (MIM cap) - outn to vcm
 XCn outn vcm sky130_fd_pr__cap_mim_m3_1 W={C_mim_w} L={C_mim_l}
 
-* Transmission gate reset switch: connects outn to vcm when reset=1
-* NMOS: d=outn, g=reset, s=vcm, b=vss
-XSWn_n outn reset vcm vss sky130_fd_pr__nfet_01v8 W={W_nsw} L={L_nsw}
-* PMOS: d=outn, g=reset_b, s=vcm, b=vdd
+* Transmission gate reset switch
+XSWn_n outn reset vcm vss sky130_fd_pr__nfet_01v8_lvt W={W_nsw} L={L_nsw}
 XSWn_p outn reset_b vcm vdd sky130_fd_pr__pfet_01v8 W={W_psw} L={L_psw}
 
 * ============================================================
-* Input connections: inp/inn are current input nodes
-* Small series resistor to avoid ngspice convergence issues
+* Input connections
 * ============================================================
 Rinp inp outp 0.1
 Rinn inn outn 0.1

@@ -1,4 +1,7 @@
 name,min,max,scale
-C_int,1e-12,20e-12,log
-W_sw,0.42e-6,5e-6,log
-L_sw,0.15e-6,1e-6,log
+C_mim_w,20e-6,80e-6,log
+C_mim_l,20e-6,80e-6,log
+W_nsw,1e-6,100e-6,log
+L_nsw,0.15e-6,1e-6,log
+W_psw,1e-6,200e-6,log
+L_psw,0.15e-6,1e-6,log
