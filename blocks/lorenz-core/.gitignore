@@ -1,0 +1,4 @@
+lorenz_output.txt
+ngspice_stdout.log
+ngspice_stderr.log
+lorenz_tb.spice

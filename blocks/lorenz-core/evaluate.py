@@ -494,28 +494,42 @@ def plot_results(data, results):
     vy_a = vy[idx_start:]
     vz_a = vz[idx_start:]
 
-    # ── Phase Portraits ──
+    # ── Generate ideal RK4 reference for overlay ──
+    a_est = results.get('a_est', 0.011)
+    t_rk4_ideal, x_rk4_i, y_rk4_i, z_rk4_i = lorenz_rk4(
+        [0, 200], 0.001, 1.0, 1.0, 1.0)
+
+    # ── Phase Portraits with ideal overlay ──
     fig, axes = plt.subplots(1, 3, figsize=(18, 5))
 
     # x-z (butterfly)
-    axes[0].plot(vx_a * 1e3, vz_a * 1e3, 'b-', alpha=0.3, linewidth=0.3)
+    axes[0].plot(x_rk4_i * a_est * 1e3, z_rk4_i * a_est * 1e3,
+                 'k-', alpha=0.1, linewidth=0.2, label='Ideal RK4')
+    axes[0].plot(vx_a * 1e3, vz_a * 1e3, 'b-', alpha=0.3, linewidth=0.3, label='Circuit')
     axes[0].set_xlabel('Vx (mV)')
     axes[0].set_ylabel('Vz (mV)')
     axes[0].set_title('X-Z Phase Portrait (Butterfly)')
+    axes[0].legend(fontsize=8)
     axes[0].grid(True, alpha=0.3)
 
     # x-y
-    axes[1].plot(vx_a * 1e3, vy_a * 1e3, 'r-', alpha=0.3, linewidth=0.3)
+    axes[1].plot(x_rk4_i * a_est * 1e3, y_rk4_i * a_est * 1e3,
+                 'k-', alpha=0.1, linewidth=0.2, label='Ideal RK4')
+    axes[1].plot(vx_a * 1e3, vy_a * 1e3, 'r-', alpha=0.3, linewidth=0.3, label='Circuit')
     axes[1].set_xlabel('Vx (mV)')
     axes[1].set_ylabel('Vy (mV)')
     axes[1].set_title('X-Y Phase Portrait')
+    axes[1].legend(fontsize=8)
     axes[1].grid(True, alpha=0.3)
 
     # y-z
-    axes[2].plot(vy_a * 1e3, vz_a * 1e3, 'g-', alpha=0.3, linewidth=0.3)
+    axes[2].plot(y_rk4_i * a_est * 1e3, z_rk4_i * a_est * 1e3,
+                 'k-', alpha=0.1, linewidth=0.2, label='Ideal RK4')
+    axes[2].plot(vy_a * 1e3, vz_a * 1e3, 'g-', alpha=0.3, linewidth=0.3, label='Circuit')
     axes[2].set_xlabel('Vy (mV)')
     axes[2].set_ylabel('Vz (mV)')
     axes[2].set_title('Y-Z Phase Portrait')
+    axes[2].legend(fontsize=8)
     axes[2].grid(True, alpha=0.3)
 
     plt.tight_layout()
