@@ -16,3 +16,4 @@ step	commit	score	specs_met	notes
 15	multi-tanh	-	-	Tried multi-tanh: worse THD (4%). Simple topology is optimal.
 16	converged	1.000	6/6	Design converged. 400+ evals. No improvement possible with simple topology.
 17	random-100	1.000	6/6	100 random samples: 0 feasible. Confirms design is in narrow optimal region.
+18	pvt-bias	1.000	6/6	PVT with bias tracking: cold@0.65V and hot@0.55V both pass ALL specs

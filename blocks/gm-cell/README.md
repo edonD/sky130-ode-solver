@@ -138,7 +138,11 @@ At nominal bias: Id ≈ 17 µA per side (total 35 µA), well within headroom.
    - **fs corner**: Gm drops to 47.2 µS, THD rises to 2.7% (FAIL).
    - **ff/sf corners**: All specs pass with margin.
 
-   **Mitigation**: The bias generator (separate block) should provide temperature-compensated Vbias_n. With proper PTAT/CTAT bias tracking, the tail current can be maintained constant across temperature, which would resolve the cold and hot issues. Process corner sensitivity may require a bandgap-referenced bias or trimming.
+   **Mitigation**: With temperature-compensated biasing:
+   - **Cold (-40°C) at Vbn=0.65V** (+50mV): Gm=62.8, THD=0.91%, Gain=45.9 — ALL PASS
+   - **Hot (175°C) at Vbn=0.55V** (-50mV): Gm=61.1, Gain=41.4 — ALL PASS
+   - Required bias tracking: ~0.5 mV/°C (easily achievable with PTAT bias)
+   - Process corners (ss, fs) need similar +50mV bias adjustment
 
 ## Experiment History
 
