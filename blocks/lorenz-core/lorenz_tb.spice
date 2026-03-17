@@ -1,0 +1,48 @@
+* Lorenz Core Testbench
+.title Lorenz Core Transient Simulation
+
+* Include SKY130 models
+.lib "sky130_models/sky130.lib.spice" tt
+
+* Include upstream subcircuits
+.include "../gm-cell/design.cir"
+.include "../integrator/design.cir"
+.include "../multiplier/design.cir"
+
+* Include lorenz core
+.include "design.cir"
+
+* ── Power and Bias ──
+Vdd  vdd  0  DC 1.8
+Vss  vss  0  DC 0
+Vcm  vcm  0  DC 0.9
+Vbn  vbias_n 0 DC 0.60
+Vbp  vbias_p 0 DC 0.50
+
+* ── Reset Signal ──
+* High for 5e-07 to let multiplier bias settle, then release
+Vrst reset 0 PULSE(1.8 0 5e-07 1n 1n 0.0003 0.0006)
+
+* ── Instantiate Lorenz Core ──
+XLorenz vxp vxn vyp vyn vzp vzn reset vbias_n vbias_p vcm vdd vss lorenz_core
+
+* ── Perturbation after reset release ──
+* Small differential current pulse to break symmetry: 1µA for 20ns
+Ipert_p vxp vcm PULSE(0 0.5u 5.049999999999999e-07 1n 1n 20n 0.0006)
+Ipert_n vcm vxn PULSE(0 0.5u 5.049999999999999e-07 1n 1n 20n 0.0006)
+
+* No explicit .ic — let reset bring everything to VCM
+
+* ── Simulation Control ──
+.option method=gear reltol=1e-4 abstol=1e-12 vntol=1e-6
+.option maxord=2 itl4=200
+
+.control
+set filetype=ascii
+set wr_vecnames
+tran 1e-09 0.0003 0 1e-09
+wrdata lorenz_output.txt V(vxp) V(vxn) V(vyp) V(vyn) V(vzp) V(vzn) V(reset)
+quit
+.endc
+
+.end

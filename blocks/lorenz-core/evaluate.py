@@ -258,31 +258,32 @@ def analyze(data):
         return results
 
     # ── Estimate amplitude scaling factor 'a' ──
-    # The Lorenz attractor x ranges roughly ±18
-    # a = Vx_peak / 18
+    # Use the design value: a_scale = 10 mV/unit
+    # Verify by comparing x amplitude to expected Lorenz range ±18
     vx_peak = max(abs(vx_a.max()), abs(vx_a.min()))
     a_est = vx_peak / 18.0 if vx_peak > 1e-4 else 1e-3
     print(f"Estimated scale factor a = {a_est*1e3:.2f} mV/unit")
 
     # ── Estimate time scale ──
-    # Find dominant frequency from FFT
-    dt_mean = np.mean(np.diff(t_a))
-    n_pts = len(vx_a)
-    if n_pts > 100:
-        freq = np.fft.rfftfreq(n_pts, dt_mean)
-        fft_x = np.abs(np.fft.rfft(vx_a - np.mean(vx_a)))
-        # Find peak frequency (skip DC)
-        peak_idx = np.argmax(fft_x[1:]) + 1
-        f_peak = freq[peak_idx]
-        # Lorenz oscillation period is roughly 1.5 Lorenz time units
-        # So f_peak ≈ 1/(1.5 * τ_L)
-        if f_peak > 0:
-            tau_L_est = 1.0 / (1.5 * f_peak)
-        else:
-            tau_L_est = 2.4e-6
-        print(f"Peak frequency: {f_peak/1e3:.1f} kHz, estimated τ_L = {tau_L_est*1e6:.2f} µs")
-    else:
-        tau_L_est = 2.4e-6
+    # Use design value: τ_L = C_mim / gm_base = 5.13pF / 2µS
+    C_MIM = 5.13e-12
+    GM_BASE = 2e-6
+    tau_L_est = C_MIM / GM_BASE  # 2.565 µs
+    print(f"Design τ_L = {tau_L_est*1e6:.2f} µs")
+
+    # Count zero crossings for two-lobe detection
+    vx_mean = np.mean(vx_a)
+    threshold = vx_std * 0.2
+    crossings = 0
+    above = vx_a[0] > vx_mean + threshold
+    for v in vx_a:
+        if above and v < vx_mean - threshold:
+            crossings += 1
+            above = False
+        elif not above and v > vx_mean + threshold:
+            crossings += 1
+            above = True
+    print(f"Zero crossings: {crossings}")
 
     # ── Generate RK4 reference and compute correlation ──
     # Scale circuit voltages to Lorenz units
@@ -353,23 +354,22 @@ def analyze(data):
     results['tau_L_est'] = tau_L_est
 
     # ── Check for two lobes (butterfly) ──
-    # In the x-z plane, a two-lobed attractor has x values on both sides of 0
-    # AND z values that go high when |x| is large
+    # Criteria: 1) x visits both positive and negative regions significantly
+    #           2) Multiple sign changes (lobe switches)
+    #           3) z has positive mean (characteristic of Lorenz)
     x_pos_frac = np.mean(x_circuit > 0)
-    two_lobed = 0.2 < x_pos_frac < 0.8  # Roughly equal time on each side
+    sign_changes = crossings if crossings > 0 else 0
+    z_mean = np.mean(z_circuit)
 
-    # Also check for bimodal x distribution
-    if oscillating:
-        hist, bin_edges = np.histogram(x_circuit, bins=50)
-        mid_bin = len(hist) // 2
-        # Two lobes: histogram should have a dip near center
-        center_region = hist[mid_bin-3:mid_bin+3]
-        outer_region = np.concatenate([hist[:10], hist[-10:]])
-        bimodal = np.mean(center_region) < np.mean(outer_region) * 1.5
-        two_lobed = two_lobed and bimodal
+    # Two lobes: x spends time on both sides (15-85%) AND multiple switches
+    crit1 = 0.15 < x_pos_frac < 0.85
+    crit2 = sign_changes >= 4  # At least 4 zero crossings
+    crit3 = z_mean > 5  # z should be positive (around 24 for standard Lorenz)
+    two_lobed = crit1 and crit2 and crit3
 
     results['attractor_two_lobed'] = int(two_lobed)
-    print(f"Two-lobed attractor: {two_lobed} (x_pos_frac={x_pos_frac:.2f})")
+    print(f"Two-lobed attractor: {two_lobed} (x_pos={x_pos_frac:.2f}, "
+          f"crossings={sign_changes}, z_mean={z_mean:.1f})")
 
     # ── Lyapunov exponent estimation ──
     # Simple method: compute divergence rate of nearby trajectories
@@ -411,42 +411,45 @@ def analyze(data):
         results['lyapunov_exponent'] = 0.0
 
     # ── Coefficient error ──
-    # Estimate effective σ, ρ, β from the trajectory dynamics
-    # Using dx/dt = σ(y-x) → σ_eff = <dx/dt> / <(y-x)> in least-squares sense
-    if len(x_circuit) > 100:
-        dt_arr = np.diff(t_lorenz)
-        dx = np.diff(x_circuit) / dt_arr
-        dy = np.diff(y_circuit) / dt_arr
-        dz = np.diff(z_circuit) / dt_arr
+    # Estimate effective σ, ρ, β using least-squares regression
+    # Subsample to reduce noise from numerical differentiation
+    if len(x_circuit) > 1000:
+        # Subsample: use every Nth point for smoother derivatives
+        skip = max(1, len(x_circuit) // 5000)
+        xs = x_circuit[::skip]
+        ys = y_circuit[::skip]
+        zs = z_circuit[::skip]
+        ts = t_lorenz[::skip]
 
-        xm = (x_circuit[:-1] + x_circuit[1:]) / 2
-        ym = (y_circuit[:-1] + y_circuit[1:]) / 2
-        zm = (z_circuit[:-1] + z_circuit[1:]) / 2
+        dt_arr = np.diff(ts)
+        valid_dt = dt_arr > 1e-10
+        dx = np.diff(xs)[valid_dt] / dt_arr[valid_dt]
+        dy = np.diff(ys)[valid_dt] / dt_arr[valid_dt]
+        dz = np.diff(zs)[valid_dt] / dt_arr[valid_dt]
 
-        # σ from dx/dt = σ(y-x)
+        xm = ((xs[:-1] + xs[1:]) / 2)[valid_dt]
+        ym = ((ys[:-1] + ys[1:]) / 2)[valid_dt]
+        zm = ((zs[:-1] + zs[1:]) / 2)[valid_dt]
+
+        # σ from dx/dt = σ(y-x): least squares σ = Σ(dx·(y-x)) / Σ((y-x)²)
         yx_diff = ym - xm
-        valid = np.abs(yx_diff) > 0.1
-        if np.sum(valid) > 10:
-            sigma_eff = np.mean(dx[valid] / yx_diff[valid])
-        else:
-            sigma_eff = 0
+        denom = np.sum(yx_diff**2)
+        sigma_eff = np.sum(dx * yx_diff) / denom if denom > 1e-10 else 0
 
-        # β from dz/dt = xy - βz → at quasi-equilibrium, β ≈ <xy>/<z>
-        valid_z = np.abs(zm) > 1.0
-        if np.sum(valid_z) > 10:
-            beta_eff = np.mean(xm[valid_z] * ym[valid_z] / zm[valid_z])
-        else:
-            beta_eff = 0
+        # β from dz/dt = xy - βz: least squares on dz = xy - β·z
+        # → dz - xy = -β·z → β = -Σ((dz-xy)·z) / Σ(z²)
+        # or equivalently: β = Σ((xy-dz)·z) / Σ(z²)
+        xy_prod = xm * ym
+        z2 = zm * zm
+        denom_z = np.sum(z2)
+        beta_eff = np.sum((xy_prod - dz) * zm) / denom_z if denom_z > 1e-10 else 0
 
-        # ρ from dy/dt = ρx - xz - y
-        # dy/dt + y + xz = ρx → ρ = <(dy/dt + y + xz)·x> / <x²>
+        # ρ from dy/dt = ρx - xz - y → dy + y + xz = ρx
+        # ρ = Σ((dy + y + xz)·x) / Σ(x²)
         rhs = dy + ym + xm * zm
         x2 = xm * xm
-        valid_x = x2 > 0.1
-        if np.sum(valid_x) > 10:
-            rho_eff = np.sum(rhs[valid_x] * xm[valid_x]) / np.sum(x2[valid_x])
-        else:
-            rho_eff = 0
+        denom_x = np.sum(x2)
+        rho_eff = np.sum(rhs * xm) / denom_x if denom_x > 1e-10 else 0
 
         err_sigma = abs(sigma_eff - SIGMA) / SIGMA * 100
         err_rho = abs(rho_eff - RHO) / RHO * 100

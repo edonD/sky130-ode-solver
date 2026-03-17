@@ -1,0 +1,43 @@
+* Minimal Lorenz - all behavioral, no subcircuits
+.title Minimal Lorenz Test
+
+.param sigma_val = 10
+.param rho_val = 28
+.param beta_val = 2.667
+.param C_val = 5p
+.param gm_ref = 5u
+
+* State variable caps (differential, each side to VCM)
+Cx1 vxp vcm {C_val}
+Cx2 vxn vcm {C_val}
+Cy1 vyp vcm {C_val}
+Cy2 vyn vcm {C_val}
+Cz1 vzp vcm {C_val}
+Cz2 vzn vcm {C_val}
+
+Vcm vcm 0 DC 0.9
+
+* dx/dt = sigma(y - x)
+Gsy vxp vxn vyp vyn {sigma_val*gm_ref}
+Gsx vxn vxp vxp vxn {sigma_val*gm_ref}
+
+* dy/dt = rho*x - y (linear terms only, ignoring xz for now)
+Grho vyp vyn vxp vxn {rho_val*gm_ref}
+Gy vyn vyp vyp vyn {gm_ref}
+
+* dz/dt = -beta*z (linear term only)
+Gbz vzn vzp vzp vzn {beta_val*gm_ref}
+
+* Initial conditions: small perturbation
+.ic V(vxp)=0.910 V(vxn)=0.890 V(vyp)=0.910 V(vyn)=0.890 V(vzp)=0.905 V(vzn)=0.895
+
+.option method=gear reltol=1e-4
+
+.control
+set filetype=ascii
+tran 1n 5u uic
+wrdata minimal_out.txt V(vxp) V(vxn) V(vyp) V(vyn) V(vzp) V(vzn)
+quit
+.endc
+
+.end

@@ -22,13 +22,13 @@
 
 * Scale factor a (V per Lorenz unit) — controls attractor amplitude
 * x ∈ [-20,20] → Vx ∈ ±200mV with a = 10mV
-.param a_scale = 0.010
+.param a_scale = 0.014
 
 * Derived Gm values for each Lorenz coefficient
 .param gm_sigma = {10 * gm_base}
-.param gm_rho   = {28 * gm_base}
+.param gm_rho   = {33 * gm_base}
 .param gm_unity = {gm_base}
-.param gm_beta  = {2.667 * gm_base}
+.param gm_beta  = {3.05 * gm_base}
 
 * Nonlinear coupling: Gm_nl * K_mult = gm_base / a_scale
 * K_mult = 1.233 V^-1 → gm_nl = gm_base / (a_scale * 1.233)

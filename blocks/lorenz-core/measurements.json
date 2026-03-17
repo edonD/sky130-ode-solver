@@ -1,0 +1,18 @@
+{
+  "trajectory_correlation": 0.9337757652851383,
+  "attractor_two_lobed": 1,
+  "lyapunov_positive": 1,
+  "coefficient_error_pct": 9.755681443695075,
+  "power_mw": 0.5408999999999999,
+  "score": 1.0,
+  "specs_passed": 5,
+  "specs_total": 5,
+  "t_lorenz_us": 2.565,
+  "x_swing_mv": 592.7863240000001,
+  "y_swing_mv": 854.3540330000001,
+  "z_swing_mv": 759.676018,
+  "sigma_eff": 10.184475004878514,
+  "rho_eff": 25.26840919576538,
+  "beta_eff": 2.4491170908255286,
+  "lyapunov_exponent": 0.6496390478253793
+}
