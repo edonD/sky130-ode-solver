@@ -14,7 +14,7 @@ A complete analog computer solving the Lorenz system of ordinary differential eq
 |------|--------|----------|--------|--------|
 | Lorenz correlation (x vs RK4) | > 0.90 | 0.909 | +1.0% | **PASS** |
 | Butterfly attractor verified | = 1 | 1 | -- | **PASS** |
-| Chaos duration | > 50 LTU | 77.7 LTU | +55% | **PASS** |
+| Chaos duration | > 50 LTU | 155.7 LTU | +211% | **PASS** |
 | Total power | < 5 mW | 0.171 mW | +96.6% | **PASS** |
 | Time scale factor | > 1000 | 389,864 | +389x | **PASS** |
 | PVT chaos survival | > 80% | 93.3% (42/45) | +13.3% | **PASS** |
@@ -34,7 +34,7 @@ The positive Lyapunov exponent confirms the system is genuinely chaotic, with ne
 
 ![Time Series](plots/time_series.png)
 
-*x(t), y(t), z(t) differential voltages over 200 us (77.7 Lorenz time units). x and y exhibit chaotic switching between two lobes (~600 mV and ~870 mV peak-to-peak). z oscillates around +400 mV (corresponding to z ~ 24 in Lorenz units, near the expected rho-1 = 27). The system sustains chaos without saturation for the entire simulation.*
+*x(t), y(t), z(t) differential voltages over 400 us (155.7 Lorenz time units). x and y exhibit chaotic switching between two lobes (~600 mV and ~870 mV peak-to-peak). z oscillates around +400 mV (corresponding to z ~ 24 in Lorenz units, near the expected rho-1 = 27). The system sustains chaos without saturation for the entire simulation.*
 
 ## Circuit vs RK4 Reference
 

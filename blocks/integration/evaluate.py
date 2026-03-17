@@ -14,7 +14,7 @@ warnings.filterwarnings('ignore')
 VCM = 0.9
 T_LORENZ_US = 2.565  # from upstream_config.json
 SIGMA, RHO, BETA = 10.0, 28.0, 8.0/3.0
-SIM_TIME_US = 200       # total sim time
+SIM_TIME_US = 400       # total sim time (>150 Lorenz time units)
 RESET_TIME_NS = 500     # reset duration
 KICK_END_NS = 520       # perturbation ends
 
