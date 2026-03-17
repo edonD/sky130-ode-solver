@@ -12,7 +12,7 @@
 .param bot_w = 20u
 .param bot_l = 1u
 .param top_w = 10u
-.param top_l = 0.5u
+.param top_l = 0.3u
 .param rload_val = 14k
 .param rdegen_val = 600
 

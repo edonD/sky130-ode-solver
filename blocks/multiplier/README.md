@@ -4,11 +4,11 @@
 
 | Spec | Target | Measured | Margin | Pass/Fail |
 |------|--------|----------|--------|-----------|
-| Linearity Error | <5% | 2.28% | 2.72% margin | PASS |
-| K_mult | >0.5 V^-1 | 1.103 V^-1 | +121% | PASS |
+| Linearity Error | <5% | 1.51% | 3.49% margin | PASS |
+| K_mult | >0.5 V^-1 | 1.280 V^-1 | +156% | PASS |
 | Output Offset | <10 mV | 0.00 mV | 10 mV margin | PASS |
-| Bandwidth | >5 MHz | 1405 MHz | >>200x | PASS |
-| THD | <2% | 0.28% | 1.72% margin | PASS |
+| Bandwidth | >5 MHz | 1602 MHz | >>300x | PASS |
+| THD | <2% | 0.16% | 1.84% margin | PASS |
 | Power | <300 uW | 86 uW | 214 uW margin | PASS |
 
 ## Key Plots
@@ -43,10 +43,10 @@
 
 | Spec | Target | Worst Case | Corner | Margin | Pass/Fail |
 |------|--------|------------|--------|--------|-----------|
-| Linearity Error | <5% | 3.00% | fs/-40C/1.98V | 2.00% | PASS |
-| K_mult | >0.5 V^-1 | 0.629 | fs/175C/1.62V | +26% | PASS |
+| Linearity Error | <5% | 1.97% | sf/27C/1.62V | 3.03% | PASS |
+| K_mult | >0.5 V^-1 | 0.641 | fs/-40C/1.62V | +28% | PASS |
 | Output Offset | <10 mV | 0.00 mV | All corners | 10 mV | PASS |
-| Power | <300 uW | 222 uW | sf/175C/1.98V | 78 uW | PASS |
+| Power | <300 uW | 230 uW | sf/175C/1.98V | 70 uW | PASS |
 
 ### PVT Sweep Plot
 ![PVT Sweep](plots/pvt_sweep.png)
@@ -56,16 +56,25 @@
 
 ### Key PVT Observations
 - **45/45 corners fully passing** all specs
-- **K_mult range:** 0.629 to 1.543 V^-1 (2.5x). Downstream calibration needed.
-- **Linearity range:** 0.6% to 3.0%. Best at cold temperatures.
-- **Power range:** 17 uW (fs/-40C/1.62V) to 222 uW (sf/175C/1.98V).
+- **K_mult range:** 0.641 to 1.792 V^-1 (2.8x). Downstream calibration needed.
+- **Linearity range:** 0.6% to 1.97%. All corners under 2%!
+- **Power range:** 17 uW (fs/-40C/1.62V) to 230 uW (sf/175C/1.98V).
 - **Offset: 0.00 mV** everywhere due to perfect symmetry.
+
+## System-Level Impact
+
+This multiplier computes x*y and x*z for the Lorenz equations. Key system considerations:
+
+- **Lorenz time scale:** K_mult affects the effective multiplication strength. With K=1.280, the product x*y produces output K*Vx*Vy. The lorenz-core must account for this.
+- **PVT tracking:** Both multiplier instances on the same die will track together (same process, temperature, supply). The K ratio between the two instances stays constant.
+- **Signal levels:** At max Lorenz excursion (Vx=Vy=300mV), output = K*0.3*0.3 = 115mV differential. Well within the +-300mV output swing spec.
+- **Bandwidth:** At 1.6 GHz, the multiplier is much faster than the Lorenz dynamics (~100kHz-1MHz), so it won't limit system bandwidth.
 
 ## Design Rationale
 
 ### Topology: Resistive-Attenuated Gilbert Cell
 
-A classic **NMOS Gilbert cell** with **resistive input attenuators** on both X and Y inputs. The attenuators keep the transistor signals in their linear operating region, achieving <3% linearity over the full +-300mV input range.
+A classic **NMOS Gilbert cell** with **resistive input attenuators** on both X and Y inputs. The attenuators keep the transistor signals in their linear operating region, achieving <2% linearity over the full +-300mV input range.
 
 **Key design choices:**
 - **X attenuation:** 5:1 (4k/1k divider) reduces +-300mV to +-60mV at top quad
@@ -73,13 +82,8 @@ A classic **NMOS Gilbert cell** with **resistive input attenuators** on both X a
 - **Y degeneration:** 600 Ohm per side linearizes bottom pair transconductance
 - **Load resistors:** 14k converts output current to voltage
 - **Tail transistor:** W/L = 60u/1.5u
-- **Bias:** vbias_n = 0.64V (optimal for linearity-power tradeoff)
-
-### How it works:
-1. Y input (attenuated + degenerated) -> bottom diff pair -> diff current proportional to Vy
-2. X input (attenuated) -> top quad steers current proportionally to Vx
-3. Cross-coupling: V_out = K * Vx * Vy (four-quadrant multiplication)
-4. Load resistors convert differential current to output voltage
+- **Top quad:** W/L = 10u/0.3u (short channel for better linearity)
+- **Bias:** vbias_n = 0.64V
 
 ## Circuit Interface
 
@@ -98,32 +102,15 @@ A classic **NMOS Gilbert cell** with **resistive input attenuators** on both X a
 | vdd | Supply, 1.8V |
 | vss | Ground |
 
-**K_mult = 1.103 V^-1** (nominal, downstream blocks use this value)
-
-## What Was Tried and Rejected
-
-1. **Bare Gilbert cell:** linearity=41%. Tanh saturates at 12Vt.
-2. **Heavy source degeneration on all transistors:** Headroom issues (1.8V).
-3. **Strong attenuation (6:1 X, 4:1 Y):** linearity=0.27% but K=0.184 (too low).
-4. **Top quad source degeneration:** Worsened linearity instead of improving it.
-5. **vbias_n=0.62V:** Excellent linearity (1.6%) but fails at fs/-40C (K<0.5).
-6. **vbias_n=0.65V:** More margin but higher power and worse linearity.
-
-## System-Level Impact
-
-This multiplier computes x*y and x*z for the Lorenz equations. Key system considerations:
-
-- **Lorenz time scale:** K_mult affects the effective multiplication strength. With K=1.103, the product x*y produces output K*Vx*Vy. The lorenz-core must account for this.
-- **PVT tracking:** Both multiplier instances on the same die will track together (same process, temperature, supply). The K ratio between the two instances stays constant.
-- **Signal levels:** At max Lorenz excursion (Vx=Vy=300mV), output = K*0.3*0.3 = 99mV differential. Well within the +-300mV output swing spec.
-- **Bandwidth:** At 1.4 GHz, the multiplier is much faster than the Lorenz dynamics (~100kHz-1MHz), so it won't limit system bandwidth.
+**K_mult = 1.280 V^-1** (nominal, downstream blocks use this value)
 
 ## Known Limitations
 
 - **Tail in triode:** Reduces CMRR but doesn't affect differential multiplication.
 - **Resistive loading:** 5k and 2k loads on inputs.
 - **Output CM ~1.4V:** Not at VCM=0.9V. Downstream must accommodate.
-- **K_mult PVT variation:** 2.5x range. System calibration needed.
+- **K_mult PVT variation:** 2.8x range. System calibration needed.
+- **Short-channel top quad (0.3u):** May have worse mismatch. Monte Carlo verification recommended.
 
 ## Design Parameters
 
@@ -131,7 +118,7 @@ This multiplier computes x*y and x*z for the Lorenz equations. Key system consid
 |-----------|-------|-------------|
 | tail_w/l | 60u/1.5u | Tail current source |
 | bot_w/l | 20u/1u | Bottom pair (Y input) |
-| top_w/l | 10u/0.5u | Top quad (X input) |
+| top_w/l | 10u/0.3u | Top quad (X input) |
 | rload | 14 kOhm | Load resistors |
 | rdegen | 600 Ohm | Bottom pair degeneration |
 | X attenuator | 4k/1k (5:1) | X input resistive divider |
@@ -148,4 +135,5 @@ This multiplier computes x*y and x*z for the Lorenz equations. Key system consid
 | 8 | 1.00 | 6/6 | tail_w 80u->60u: better power |
 | 9 | 1.00 | 6/6 | tail_l 1u->1.5u: all margins improved |
 | 10 | 1.00 | 6/6 | Y atten 2.25:1, rdeg 600: linearity 2.48% |
-| 11 | 1.00 | 6/6 | vbias_n 0.65->0.64: lin 2.28%, THD 0.28%, pwr 86uW |
+| 11 | 1.00 | 6/6 | vbias_n 0.64V: lin 2.28%, THD 0.28% |
+| 12 | 1.00 | 6/6 | top_l 0.5u->0.3u: lin 1.51%, THD 0.16%, all 45 PVT <2% |

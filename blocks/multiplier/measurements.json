@@ -1,13 +1,9 @@
 {
-  "k_mult": 1.1032467907273102,
-  "linearity_error_pct": 2.2839544088337127,
+  "k_mult": 1.280022488334177,
+  "linearity_error_pct": 1.5086332603644688,
   "output_offset_mv": 0.0,
-  "bw_mhz": 1405.2877308636914,
-  "thd_pct": 0.2769693475350451,
-  "power_uw": 86.33583,
-  "score": 1.0,
-  "output_cm_v": 1.41,
-  "max_output_swing_mv": 99.3,
-  "input_impedance_x_ohm": 5000,
-  "input_impedance_y_ohm": 2250
+  "bw_mhz": 1602.0185039336693,
+  "thd_pct": 0.16360385428066732,
+  "power_uw": 86.43553,
+  "score": 1.0
 }
