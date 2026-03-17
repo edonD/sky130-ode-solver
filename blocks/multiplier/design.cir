@@ -8,7 +8,7 @@
 .subckt multiplier xp xn yp yn outp outn vbias_n vbias_p vcm vdd vss
 
 .param tail_w = 60u
-.param tail_l = 1u
+.param tail_l = 1.5u
 .param bot_w = 20u
 .param bot_l = 1u
 .param top_w = 10u

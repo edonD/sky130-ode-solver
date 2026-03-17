@@ -1,6 +1,6 @@
 name,value
 tail_w,60e-6
-tail_l,1e-6
+tail_l,1.5e-6
 bot_w,20e-6
 bot_l,1e-6
 top_w,10e-6
