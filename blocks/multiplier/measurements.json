@@ -5,5 +5,9 @@
   "bw_mhz": 1405.2877308636914,
   "thd_pct": 0.2769693475350451,
   "power_uw": 86.33583,
-  "score": 1.0
+  "score": 1.0,
+  "output_cm_v": 1.41,
+  "max_output_swing_mv": 99.3,
+  "input_impedance_x_ohm": 5000,
+  "input_impedance_y_ohm": 2250
 }
