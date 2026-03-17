@@ -9,3 +9,4 @@ step	commit	score	specs_met	notes
 8	li-2.2u	1.000	6/6	Li=2.2u Rs=4500 Wl=25u: min margin 14.1%. Gain=45.7dB. Best overall.
 9	li-3.0u	1.000	6/6	Li=3.0u Rs=4300 Wl=25u: min margin 16.0%. All specs >16%. Final best.
 10	wi-40-wt-95	1.000	6/6	Wi=40u Wt=95u Li=3u Rs=4200: min margin 17.2%. Best overall.
+11	li-3.5-wi-45	1.000	6/6	Wi=45u Li=3.5u Wt=95u Rs=4200: min margin 18.4%. Gain=47.3dB. Best.

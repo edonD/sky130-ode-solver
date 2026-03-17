@@ -7,8 +7,8 @@
 .subckt gm_cell inp inn outp outn vbias_n vbias_p vcm vdd vss
 
 * Optimized parameters
-.param W_in=4e-05
-.param L_in=3e-06
+.param W_in=4.5e-05
+.param L_in=3.5e-06
 .param W_load=2.5e-05
 .param L_load=4e-06
 .param W_tail=9.5e-05
