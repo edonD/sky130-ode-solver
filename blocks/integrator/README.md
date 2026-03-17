@@ -125,6 +125,11 @@
 
 *1MHz 5µA sinusoidal current input. The output shows a cosine waveform (90-degree phase shift), confirming the integrator operates correctly. The output also ramps due to any DC offset in the input.*
 
+### Lorenz-like Step Response
+![Lorenz step response](plots/lorenz_step_response.png)
+
+*Top: Integrator output with step current inputs of varying amplitude (10µA, -5µA, 15µA, -20µA), mimicking OTA output in the Lorenz system. The output ramps linearly during each step, demonstrating proper integration. Bottom: Input current profile.*
+
 ### Zoomed Charge Injection
 ![Charge injection zoom](plots/charge_injection_zoom.png)
 
