@@ -50,6 +50,9 @@ All 45 PVT corners (5 process x 3 temperatures x 3 supply voltages) pass all spe
 ### PVT Sweep Plot
 ![PVT Sweep](plots/pvt_sweep.png)
 
+### PVT Sensitivity Analysis
+![PVT Sensitivity](plots/pvt_sensitivity.png)
+
 ### Key PVT Observations
 - **45/45 corners fully passing** all tested specs
 - **K_mult range:** 0.632 to 1.604 V^-1 (2.5x). Downstream calibration needed.
