@@ -152,6 +152,11 @@
 | LVT PFET | Not available at L=0.15µm in SKY130 (min L=1.5µm) | Used standard PFET (adequate overdrive) |
 | W=25u/50u with LVT | Passed 7/7 nominal but 29/45 PVT | Increased to 55u/99u → 45/45 PVT |
 
+### Time Constant Variation
+![Tau PVT](plots/tau_pvt.png)
+
+*Integration time constant tau = C_int/Gm across PVT. Varies from 0.051 µs (cold) to 0.086 µs (ff/175C/1.62V) due to temperature-dependent switch parasitic capacitance. The ~1.7x variation is acceptable for the chaotic Lorenz system.*
+
 ## Known Limitations
 
 - **Charge injection at cold corners** — CI reaches 4.09 mV at ss/-40C/1.98V (0.91 mV margin). Higher VDD increases CI because switch channel charge increases.
