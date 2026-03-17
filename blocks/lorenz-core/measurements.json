@@ -1,18 +1,18 @@
 {
-  "trajectory_correlation": 0.9337757652851383,
+  "trajectory_correlation": 0.9190234269891975,
   "attractor_two_lobed": 1,
   "lyapunov_positive": 1,
-  "coefficient_error_pct": 9.755681443695075,
+  "coefficient_error_pct": 9.629567518221105,
   "power_mw": 0.5408999999999999,
   "score": 1.0,
   "specs_passed": 5,
   "specs_total": 5,
   "t_lorenz_us": 2.565,
-  "x_swing_mv": 592.7863240000001,
-  "y_swing_mv": 854.3540330000001,
-  "z_swing_mv": 759.676018,
-  "sigma_eff": 10.184475004878514,
-  "rho_eff": 25.26840919576538,
-  "beta_eff": 2.4491170908255286,
-  "lyapunov_exponent": 0.6496390478253793
+  "x_swing_mv": 619.490642,
+  "y_swing_mv": 906.400408,
+  "z_swing_mv": 780.9905019999999,
+  "sigma_eff": 10.187357464013404,
+  "rho_eff": 25.30372109489809,
+  "beta_eff": 2.5315306345700366,
+  "lyapunov_exponent": 0.6433566975206307
 }
