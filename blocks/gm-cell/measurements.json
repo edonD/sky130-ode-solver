@@ -7,5 +7,7 @@
   "gm_ratio": 52.396010699399135,
   "gm_max_us": 68.87910958333333,
   "gm_min_us": 1.3145869058333333,
-  "score": 1.0
+  "score": 1.0,
+  "rout_kohm": 4018,
+  "gm_flatness_pct": 5.0
 }
