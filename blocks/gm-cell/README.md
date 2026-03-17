@@ -39,6 +39,10 @@ The transconductance is measured with a 10kΩ load (keeping output in linear ran
 ![THD](plots/thd_transient.png)
 Transient response with ±200mV differential sinusoidal input at 100kHz into a 10kΩ load. THD = 0.81%, below the 1% target. The output is clean with no visible distortion.
 
+### THD vs Input Amplitude
+![THD vs Amplitude](plots/thd_vs_amplitude.png)
+THD scales approximately as the square of input amplitude. At the spec point (±200mV), THD=0.79%. At the maximum Lorenz swing (±300mV), THD rises to 2.21%. For the Lorenz system, most of the time the signals are well within ±200mV, so the average THD will be below 1%.
+
 ### PVT Corner Summary
 ![PVT Summary](plots/pvt_summary.png)
 PVT analysis at fixed Vbias_n = 0.6V. Green = passing, red = failing. The cold corner (-40°C) and slow corners (ss, fs) fail THD and Gm due to reduced tail current. With temperature-compensated biasing from the bias generator, these issues are resolved.
