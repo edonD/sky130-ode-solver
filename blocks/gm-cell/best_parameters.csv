@@ -1,0 +1,8 @@
+name,value
+W_in,5e-6
+L_in,0.5e-6
+W_load,8e-6
+L_load,1e-6
+W_tail,10e-6
+L_tail,1e-6
+Rs_deg,2000
