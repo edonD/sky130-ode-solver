@@ -4,8 +4,8 @@
 
 | Spec | Target | Measured | Margin | Pass/Fail |
 |------|--------|----------|--------|-----------|
-| Linearity Error | <5% | 2.83% | 2.17% margin | PASS |
-| K_mult | >0.5 V^-1 | 1.193 V^-1 | +139% | PASS |
+| Linearity Error | <5% | 2.48% | 2.52% margin | PASS |
+| K_mult | >0.5 V^-1 | 1.124 V^-1 | +125% | PASS |
 | Output Offset | <10 mV | 0.00 mV | 10 mV margin | PASS |
 | Bandwidth | >5 MHz | 1403 MHz | >>200x | PASS |
 | THD | <2% | 0.32% | 1.68% margin | PASS |
@@ -42,19 +42,19 @@ All 45 PVT corners (5 process x 3 temperatures x 3 supply voltages) pass all spe
 
 | Spec | Target | Worst Case | Corner | Margin | Pass/Fail |
 |------|--------|------------|--------|--------|-----------|
-| Linearity Error | <5% | 2.83% | tt/27C/1.8V | 2.17% | PASS |
-| K_mult | >0.5 V^-1 | 0.674 | fs/175C/1.62V | +35% | PASS |
+| Linearity Error | <5% | 2.49% | tt/27C/1.8V | 2.51% | PASS |
+| K_mult | >0.5 V^-1 | 0.632 | fs/175C/1.62V | +26% | PASS |
 | Output Offset | <10 mV | 0.00 mV | All corners | 10 mV | PASS |
-| Power | <300 uW | 224 uW | sf/175C/1.98V | 76 uW | PASS |
+| Power | <300 uW | 231 uW | sf/175C/1.98V | 69 uW | PASS |
 
 ### PVT Sweep Plot
 ![PVT Sweep](plots/pvt_sweep.png)
 
 ### Key PVT Observations
 - **45/45 corners fully passing** all tested specs
-- **K_mult range:** 0.674 to 1.696 V^-1 (2.5x). Downstream calibration needed.
-- **Linearity range:** 1.0% to 2.83%. Best at cold temperatures.
-- **Power range:** 22 uW (fs/-40C/1.62V) to 224 uW (sf/175C/1.98V).
+- **K_mult range:** 0.632 to 1.604 V^-1 (2.5x). Downstream calibration needed.
+- **Linearity range:** 0.7% to 2.49%. Best at cold temperatures.
+- **Power range:** 22 uW (fs/-40C/1.62V) to 231 uW (sf/175C/1.98V).
 - **Offset: 0.00 mV** everywhere due to perfect symmetry.
 
 ## Design Rationale
@@ -71,8 +71,8 @@ A classic **NMOS Gilbert cell** with **resistive input attenuators** on both X a
 
 **Key design choices:**
 - **X attenuation:** 5:1 (4k/1k divider) reduces +-300mV to +-60mV at top quad
-- **Y attenuation:** 2:1 (1k/1k divider) reduces +-300mV to +-150mV at bottom pair
-- **Y degeneration:** 800 Ohm per side linearizes bottom pair transconductance
+- **Y attenuation:** 2.25:1 (1.25k/1k divider) reduces +-300mV to +-133mV at bottom pair
+- **Y degeneration:** 600 Ohm per side linearizes bottom pair transconductance
 - **Load resistors:** 14k converts output current to voltage
 - **Tail transistor:** W/L = 60u/1.5u (longer channel for reduced current, better output impedance)
 
@@ -99,7 +99,7 @@ A classic **NMOS Gilbert cell** with **resistive input attenuators** on both X a
 | vdd | Supply, 1.8V |
 | vss | Ground |
 
-**K_mult = 1.193 V^-1** (nominal, downstream blocks use this value)
+**K_mult = 1.124 V^-1** (nominal, downstream blocks use this value)
 
 ## What Was Tried and Rejected
 
@@ -125,9 +125,9 @@ A classic **NMOS Gilbert cell** with **resistive input attenuators** on both X a
 | bot_w/l | 20u/1u | Bottom pair (Y input) |
 | top_w/l | 10u/0.5u | Top quad (X input) |
 | rload | 14 kOhm | Load resistors |
-| rdegen | 800 Ohm | Bottom pair degeneration |
+| rdegen | 600 Ohm | Bottom pair degeneration |
 | X attenuator | 4k/1k (5:1) | X input resistive divider |
-| Y attenuator | 1k/1k (2:1) | Y input resistive divider |
+| Y attenuator | 1.25k/1k (2.25:1) | Y input resistive divider |
 | vbias_n | 0.65V | Tail bias (set by testbench) |
 
 ## Experiment History
@@ -143,3 +143,4 @@ A classic **NMOS Gilbert cell** with **resistive input attenuators** on both X a
 | 7 | 1.00 | 6/6 | Rload 12k->14k for K margin |
 | 8 | 1.00 | 6/6 | tail_w 80u->60u: improved power margin |
 | 9 | 1.00 | 6/6 | tail_l 1u->1.5u: worst power 265->224uW, all 45 PVT pass |
+| 10 | 1.00 | 6/6 | Y atten 2:1->2.25:1, rdeg 800->600: linearity 2.83->2.48% |

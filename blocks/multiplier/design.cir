@@ -14,7 +14,7 @@
 .param top_w = 10u
 .param top_l = 0.5u
 .param rload_val = 14k
-.param rdegen_val = 800
+.param rdegen_val = 600
 
 * === X input attenuators: ~5:1 (+-300mV to +-60mV) ===
 Rax1 xp xp_int 4k
@@ -22,10 +22,10 @@ Rax2 xp_int vcm 1k
 Rax3 xn xn_int 4k
 Rax4 xn_int vcm 1k
 
-* === Y input attenuators: ~2:1 (+-300mV to +-150mV) ===
-Ray1 yp yp_int 1k
+* === Y input attenuators: ~2.25:1 (+-300mV to +-133mV) ===
+Ray1 yp yp_int 1.25k
 Ray2 yp_int vcm 1k
-Ray3 yn yn_int 1k
+Ray3 yn yn_int 1.25k
 Ray4 yn_int vcm 1k
 
 * === Tail current source ===
