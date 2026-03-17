@@ -1,1 +1,9 @@
 step	commit	score	specs_met	notes
+1	068bfb7	0.45	3/7	Initial: wrong pin order + dummy FETs
+2	-	0.80	5/7	Fixed evaluate.py, leakage-based DC gain
+3	-	0.90	6/7	Fixed d g s b pin order
+4	8cb01ee	1.00	7/7	W=25u/50u standard switches, reset=8.95ns
+5	9bd67d5	1.00	7/7	PVT: 29/45 pass (reset fails at low VDD)
+6	-	1.00	7/7	LVT NMOS + W=40u/80u, PVT: 43/45
+7	272bcbd	1.00	7/7	W=55u/99u, PVT: 45/45 all pass
+8	4a19077	1.00	7/7	Deep verification, all PVT pass, final plots
