@@ -92,11 +92,17 @@
 
 5. **Passive design** — No DC power consumption. All gain comes from the upstream OTA; the integrator is just a capacitor with reset.
 
-## PVT Performance Plot
+## PVT Performance Plots
 
+### All 45 Corners — Reset Time & Charge Injection
+![PVT all corners](plots/pvt_all_corners.png)
+
+*All 45 PVT corners (5 process × 3 temp × 3 VDD) pass both critical specs. Top: Reset time (all < 10ns, worst 9.20ns at ss/-40C/1.62V). Bottom: Charge injection (all < 5mV, worst 4.09mV at ss/-40C/1.98V). Green bars = passing.*
+
+### PVT Summary by Corner
 ![PVT Summary](plots/pvt_summary.png)
 
-*Left: Reset time at -40C across process corners and supply voltages. All corners pass the 10ns spec. Worst case: ss/-40C/1.62V = 9.20ns. Right: Charge injection at -40C. All corners pass the 5mV spec. Worst case: ss/-40C/1.98V = 4.09mV.*
+*Left: Reset time at -40C across process corners and supply voltages. Right: Charge injection at -40C.*
 
 ## Key Plots
 
