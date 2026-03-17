@@ -43,7 +43,8 @@ def run_ngspice(netlist: str, timeout: int = 300) -> str:
             pass
 
 
-def parse_wrdata(filename: str) -> Tuple[np.ndarray, np.ndarray]:
+def parse_wrdata(filename: str) -> Tuple[np.ndarray, ...]:
+    """Parse wrdata output. Returns (col0, col1) or (col0, col1, col2) if 3 columns."""
     fullpath = os.path.join(PROJECT_DIR, filename)
     data = []
     with open(fullpath) as f:
@@ -54,12 +55,15 @@ def parse_wrdata(filename: str) -> Tuple[np.ndarray, np.ndarray]:
             parts = line.split()
             if len(parts) >= 2:
                 try:
-                    data.append((float(parts[0]), float(parts[1])))
+                    row = [float(p) for p in parts]
+                    data.append(row)
                 except ValueError:
                     continue
     if not data:
         return np.array([]), np.array([])
     data = np.array(data)
+    if data.shape[1] >= 3:
+        return data[:, 0], data[:, 1], data[:, 2]
     return data[:, 0], data[:, 1]
 
 
@@ -207,7 +211,7 @@ Vxn xn 0 dc {VCM} ac -0.5
 Xmult xp xn yp yn outp outn vbias_n vbias_p vcm vdd vss multiplier
 
 .control
-ac dec 50 1k 1g
+ac dec 50 1k 100g
 wrdata bw_data.txt v(outp)-v(outn)
 .endc
 .end
@@ -215,7 +219,13 @@ wrdata bw_data.txt v(outp)-v(outn)
     output = run_ngspice(netlist, timeout=120)
 
     try:
-        freq, mag = parse_wrdata("bw_data.txt")
+        parsed = parse_wrdata("bw_data.txt")
+        if len(parsed) == 3:
+            freq, real, imag = parsed
+            mag_abs = np.sqrt(real**2 + imag**2)
+        else:
+            freq, mag = parsed
+            mag_abs = np.abs(mag)
     except:
         print("ERROR: No bandwidth data")
         return 0
@@ -225,7 +235,6 @@ wrdata bw_data.txt v(outp)-v(outn)
     if len(freq) < 2:
         return 0
 
-    mag_abs = np.abs(mag)
     if mag_abs[0] == 0:
         return 0
 
@@ -421,6 +430,55 @@ def generate_plots(lin_data: Dict, measurements: Dict):
     plt.tight_layout()
     plt.savefig(os.path.join(PLOTS_DIR, 'transfer_curves.png'), dpi=150)
     plt.close()
+
+    # BW frequency response plot
+    try:
+        bw_netlist = f"""BW Plot
+.lib "sky130_models/sky130.lib.spice" tt
+.temp 27
+.include "design.cir"
+Vdd vdd 0 1.8
+Vss vss 0 0
+Vcm vcm 0 {VCM}
+Vbias_n vbias_n 0 0.65
+Vbias_p vbias_p 0 1.3
+Vyp yp 0 dc {VCM + 0.1}
+Vyn yn 0 dc {VCM - 0.1}
+Vxp xp 0 dc {VCM} ac 0.5
+Vxn xn 0 dc {VCM} ac -0.5
+Xmult xp xn yp yn outp outn vbias_n vbias_p vcm vdd vss multiplier
+.control
+ac dec 50 1k 100g
+wrdata bw_plot.txt v(outp)-v(outn)
+.endc
+.end
+"""
+        run_ngspice(bw_netlist)
+        parsed = parse_wrdata("bw_plot.txt")
+        if len(parsed) == 3:
+            bw_freq, bw_real, bw_imag = parsed
+            bw_mag = np.sqrt(bw_real**2 + bw_imag**2)
+        else:
+            bw_freq, bw_mag_raw = parsed
+            bw_mag = np.abs(bw_mag_raw)
+        cleanup("bw_plot.txt")
+
+        if len(bw_freq) > 0 and bw_mag[0] > 0:
+            bw_db = 20 * np.log10(bw_mag / bw_mag[0] + 1e-30)
+            fig, ax = plt.subplots(figsize=(8, 5))
+            ax.semilogx(bw_freq / 1e6, bw_db, 'b-', linewidth=2)
+            ax.axhline(y=-3, color='r', linestyle='--', label='-3dB')
+            ax.axvline(x=5, color='g', linestyle=':', label='Target: 5 MHz')
+            ax.set_xlabel('Frequency (MHz)')
+            ax.set_ylabel('Gain (dB, normalized)')
+            ax.set_title(f'Frequency Response (DC gain = {20*np.log10(bw_mag[0]):.1f} dB)')
+            ax.legend(); ax.grid(True, alpha=0.3)
+            ax.set_ylim([-40, 5])
+            plt.tight_layout()
+            plt.savefig(os.path.join(PLOTS_DIR, 'bandwidth.png'), dpi=150)
+            plt.close()
+    except Exception as e:
+        print(f"  BW plot error: {e}")
 
     # Spec summary
     fig, ax = plt.subplots(figsize=(10, 5))

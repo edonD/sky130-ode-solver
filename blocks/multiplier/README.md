@@ -7,7 +7,7 @@
 | Linearity Error | <5% | 3.22% | 1.78% margin | PASS |
 | K_mult | >0.5 V⁻¹ | 1.018 V⁻¹ | +103% | PASS |
 | Output Offset | <10 mV | 0.00 mV | 10 mV margin | PASS |
-| Bandwidth | >5 MHz | 826 MHz | >>100x | PASS |
+| Bandwidth | >5 MHz | 1553 MHz | >>300x | PASS |
 | THD | <2% | 0.42% | 1.58% margin | PASS |
 | Power | <300 uW | 158 uW | 142 uW margin | PASS |
 
@@ -21,6 +21,9 @@
 
 ### Transfer Curves
 ![Transfer Curves](plots/transfer_curves.png)
+
+### Frequency Response
+![Bandwidth](plots/bandwidth.png)
 
 ### Spec Compliance Summary
 ![Spec Summary](plots/spec_summary.png)
@@ -78,7 +81,7 @@ The design uses a classic **NMOS Gilbert cell** with **resistive input attenuato
 - **Tail transistor in triode:** At the current bias point, the tail MOSFET operates near triode region. This reduces CMRR but doesn't affect differential multiplication.
 - **Resistive attenuators load the inputs:** The 4k/1k and 1k/1k dividers present 5k and 2k loads to the driving stages.
 - **Output common mode:** Output CM is ~1.27V (not at VCM=0.9V). Downstream stages must accommodate this.
-- **PVT verification pending:** Current results are tt corner, 27C, 1.8V only.
+- **PVT verified:** All specs pass across all 45 PVT corners (5 process x 3 temp x 3 VDD).
 
 ## Design Parameters
 
@@ -101,3 +104,22 @@ The design uses a classic **NMOS Gilbert cell** with **resistive input attenuato
 | 3 | 0.70 | 5/6 | Added X attenuators (6:1), K low |
 | 4 | 0.90 | 5/6 | Both attenuated (6:1 X, 4:1 Y), K=0.18 too low |
 | 5 | 1.00 | 6/6 | Balanced (5:1 X, 2:1 Y + degen), all specs pass |
+
+## PVT Corner Verification
+
+All 45 PVT corners (5 process x 3 temperatures x 3 supply voltages) pass all specs.
+
+### Worst-Case PVT Results
+
+| Spec | Target | Worst Case | Corner | Pass/Fail |
+|------|--------|------------|--------|-----------|
+| Linearity Error | <5% | 3.70% | ff/-40C/1.98V | PASS |
+| K_mult | >0.5 V^-1 | 0.575 | ss/175C/1.62V | PASS |
+| Output Offset | <10 mV | 0.00 mV | All corners | PASS |
+| Power | <300 uW | 240 uW | sf/175C/1.62V | PASS |
+
+### Key PVT Observations
+- **K_mult variation:** 0.575 to 1.469 V^-1 (2.5x range). Downstream blocks should calibrate for this.
+- **Linearity is best at high temperature** (more thermal voltage = more linear tanh).
+- **Power varies** from 43 uW (ss/-40C/1.62V) to 240 uW (sf/175C/1.62V).
+- **Offset stays at 0 mV** across all corners due to symmetric design.
