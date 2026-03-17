@@ -31,9 +31,17 @@ When measured into a low-impedance load (10kΩ), the transconductance shows no r
 ![Gm Ratio](plots/gm_ratio.png)
 Gm ranges from 1.15 µS (Vbias_n=0.38V, near threshold) to 60.2 µS (Vbias_n>0.7V), giving a ratio of 52.5x. Above Vbias_n≈0.7V, Gm saturates at ~60 µS as source degeneration dominates (Gm→1/Rs). The Lorenz coefficients (σ=10, ρ=28, β=2.67, unity=1) span a 28:1 range, well within the 52.5x tuning range.
 
+### Gm Linearity vs Input
+![Gm vs Vin](plots/gm_vs_vin.png)
+The transconductance is measured with a 10kΩ load (keeping output in linear range). The upper plot shows the I-V characteristic with ideal linear fit. The lower plot shows Gm vs input voltage. Gm is flat within ~10% over the ±200mV range, confirming effective source degeneration. At the center, Gm = 58.3 µS.
+
 ### THD Transient Waveform
 ![THD](plots/thd_transient.png)
-Transient response with ±200mV differential sinusoidal input at 100kHz into a 10kΩ load. THD = 0.84%, below the 1% target. The output is clean with no visible distortion.
+Transient response with ±200mV differential sinusoidal input at 100kHz into a 10kΩ load. THD = 0.81%, below the 1% target. The output is clean with no visible distortion.
+
+### PVT Corner Summary
+![PVT Summary](plots/pvt_summary.png)
+PVT analysis at fixed Vbias_n = 0.6V. Green = passing, red = failing. The cold corner (-40°C) and slow corners (ss, fs) fail THD and Gm due to reduced tail current. With temperature-compensated biasing from the bias generator, these issues are resolved.
 
 ## Design Parameters
 
