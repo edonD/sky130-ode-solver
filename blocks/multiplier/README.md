@@ -109,6 +109,15 @@ A classic **NMOS Gilbert cell** with **resistive input attenuators** on both X a
 5. **vbias_n=0.62V:** Excellent linearity (1.6%) but fails at fs/-40C (K<0.5).
 6. **vbias_n=0.65V:** More margin but higher power and worse linearity.
 
+## System-Level Impact
+
+This multiplier computes x*y and x*z for the Lorenz equations. Key system considerations:
+
+- **Lorenz time scale:** K_mult affects the effective multiplication strength. With K=1.103, the product x*y produces output K*Vx*Vy. The lorenz-core must account for this.
+- **PVT tracking:** Both multiplier instances on the same die will track together (same process, temperature, supply). The K ratio between the two instances stays constant.
+- **Signal levels:** At max Lorenz excursion (Vx=Vy=300mV), output = K*0.3*0.3 = 99mV differential. Well within the +-300mV output swing spec.
+- **Bandwidth:** At 1.4 GHz, the multiplier is much faster than the Lorenz dynamics (~100kHz-1MHz), so it won't limit system bandwidth.
+
 ## Known Limitations
 
 - **Tail in triode:** Reduces CMRR but doesn't affect differential multiplication.
