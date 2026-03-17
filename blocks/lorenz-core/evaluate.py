@@ -23,10 +23,10 @@ RHO = 28.0
 BETA = 8.0 / 3.0
 
 # Simulation parameters
-T_RESET = 200e-9       # Reset release time (200 ns)
+T_RESET = 500e-9       # Reset phase (500 ns to let multiplier settle)
 T_SIM = 300e-6         # Total simulation time
 T_STEP = 1e-9          # Max timestep
-T_SETTLE = 5e-6        # Settling time after reset before analysis
+T_SETTLE = 1e-6        # Settling time after reset before analysis
 
 PLOTS_DIR = 'plots'
 os.makedirs(PLOTS_DIR, exist_ok=True)
@@ -57,16 +57,18 @@ Vbn  vbias_n 0 DC 0.60
 Vbp  vbias_p 0 DC 0.50
 
 * ── Reset Signal ──
-* High for first {T_RESET}s, then goes low
+* High for {T_RESET} to let multiplier bias settle, then release
 Vrst reset 0 PULSE(1.8 0 {T_RESET} 1n 1n {T_SIM} {T_SIM*2})
 
 * ── Instantiate Lorenz Core ──
 XLorenz vxp vxn vyp vyn vzp vzn reset vbias_n vbias_p vcm vdd vss lorenz_core
 
-* ── Initial Conditions (small perturbation from VCM) ──
-.ic V(vxp)={VCM + 0.010} V(vxn)={VCM - 0.010}
-.ic V(vyp)={VCM + 0.010} V(vyn)={VCM - 0.010}
-.ic V(vzp)={VCM + 0.005} V(vzn)={VCM - 0.005}
+* ── Perturbation after reset release ──
+* Small differential current pulse to break symmetry: 1µA for 20ns
+Ipert_p vxp vcm PULSE(0 0.5u {T_RESET+5e-9} 1n 1n 20n {T_SIM*2})
+Ipert_n vcm vxn PULSE(0 0.5u {T_RESET+5e-9} 1n 1n 20n {T_SIM*2})
+
+* No explicit .ic — let reset bring everything to VCM
 
 * ── Simulation Control ──
 .option method=gear reltol=1e-4 abstol=1e-12 vntol=1e-6
@@ -75,7 +77,7 @@ XLorenz vxp vxn vyp vyn vzp vzn reset vbias_n vbias_p vcm vdd vss lorenz_core
 .control
 set filetype=ascii
 set wr_vecnames
-tran {T_STEP} {T_SIM} 0 {T_STEP} uic
+tran {T_STEP} {T_SIM} 0 {T_STEP}
 wrdata lorenz_output.txt V(vxp) V(vxn) V(vyp) V(vyn) V(vzp) V(vzn) V(reset)
 quit
 .endc
@@ -157,14 +159,15 @@ def parse_output():
 
         print(f"Parsed {data.shape[0]} data points, {data.shape[1]} columns")
 
-        # Extract columns
+        # wrdata format: paired (time, value) columns for each signal
+        # Columns: time,V(vxp), time,V(vxn), time,V(vyp), time,V(vyn), time,V(vzp), time,V(vzn), time,V(reset)
         t = data[:, 0]
         vxp = data[:, 1]
-        vxn = data[:, 2]
-        vyp = data[:, 3]
-        vyn = data[:, 4]
-        vzp = data[:, 5]
-        vzn = data[:, 6]
+        vxn = data[:, 3]
+        vyp = data[:, 5]
+        vyn = data[:, 7]
+        vzp = data[:, 9]
+        vzn = data[:, 11]
 
         # Compute differential signals
         vx = vxp - vxn
@@ -715,12 +718,7 @@ def compute_score(results, power_mw):
         print(f"{spec_name:<30} {str(target):<15} {val:<15.4f} {status:<10}")
 
     score = weighted_score / total_weight if total_weight > 0 else 0
-    specs_met = sum(1 for s in specs if results.get(s, 0) == specs[s]['target']
-                    if specs[s]['op'] == '='
-                    else (results.get(s, 0) > specs[s]['target'] if specs[s]['op'] == '>'
-                          else results.get(s, 0) < specs[s]['target']))
 
-    # Count passing specs properly
     n_pass = 0
     for spec_name, spec in specs.items():
         val = results.get(spec_name, 0)

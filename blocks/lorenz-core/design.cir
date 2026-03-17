@@ -3,76 +3,85 @@
 * dy/dt = ρ·x − x·z − y     ρ = 28
 * dz/dt = x·y − β·z          β = 8/3 ≈ 2.667
 *
-* Uses real Gm cells for linear terms, real multipliers for products,
-* behavioral VCCS for multiplier-to-integrator coupling (gain beyond
-* single Gm cell range), and real integrators.
+* Architecture:
+*   - Behavioral B-source VCCS for each equation's right-hand side
+*   - Real SKY130 integrators (MIM caps + reset switches)
+*   - Real SKY130 multipliers for x*z and x*y (realistic nonlinear behavior)
+*   - Behavioral buffers isolate integrator outputs from multiplier loading
 *
 * Interface: .subckt lorenz_core vxp vxn vyp vyn vzp vzn reset vbias_n vbias_p vcm vdd vss
 
 .subckt lorenz_core vxp vxn vyp vyn vzp vzn reset vbias_n vbias_p vcm vdd vss
 
 * ============================================================
-* Bias voltages for Gm cells (programmable transconductance)
-* τ_L ≈ 2.4 µs, C = 5.13 pF
-* Gm_ρ = 60 µS (max) → Vbn = 0.70V
-* Gm_σ = 21.4 µS     → Vbn ≈ 0.525V
-* Gm_β = 5.71 µS      → Vbn ≈ 0.455V
-* Gm_1 = 2.14 µS      → Vbn ≈ 0.405V
+* Scaling parameters
 * ============================================================
-Vbn_sigma  vbn_sigma  0  DC 0.525
-Vbn_rho    vbn_rho    0  DC 0.700
-Vbn_unity  vbn_unity  0  DC 0.405
-Vbn_beta   vbn_beta   0  DC 0.455
-Vbn_mult   vbn_mult   0  DC 0.640
+* gm_base sets the time scale: τ_L = C_eff / gm_base
+* C_eff ≈ 2.565 pF (differential), so τ_L = 2.565p / 2µ = 1.28 µs
+.param gm_base = 2u
 
-* Nonlinear coupling gain (behavioral VCCS)
-* Gm_nl sets the multiplier-to-integrator current gain
-* This value determines the attractor amplitude
-.param gm_nl = 150u
+* Scale factor a (V per Lorenz unit) — controls attractor amplitude
+* x ∈ [-20,20] → Vx ∈ ±200mV with a = 10mV
+.param a_scale = 0.010
+
+* Derived Gm values for each Lorenz coefficient
+.param gm_sigma = {10 * gm_base}
+.param gm_rho   = {28 * gm_base}
+.param gm_unity = {gm_base}
+.param gm_beta  = {2.667 * gm_base}
+
+* Nonlinear coupling: Gm_nl * K_mult = gm_base / a_scale
+* K_mult = 1.233 V^-1 → gm_nl = gm_base / (a_scale * 1.233)
+.param gm_nl = {gm_base / (a_scale * 1.233)}
+
+* Multiplier bias
+.param vbn_mult = 0.64
 
 * ============================================================
-* X Channel: dx/dt = σ(y − x) = +σy − σx
-* Two Gm cells: one for +σy, one for −σx (output polarity swapped)
+* Voltage buffers (isolate integrator caps from multiplier loading)
 * ============================================================
-XGm_sy  vyp vyn  xn1 xn2  vbn_sigma vbias_p vcm vdd vss  gm_cell
-XGm_sx  vxp vxn  xn2 xn1  vbn_sigma vbias_p vcm vdd vss  gm_cell
+Ebuf_xp  bxp  0  vxp 0  1.0
+Ebuf_xn  bxn  0  vxn 0  1.0
+Ebuf_yp  byp  0  vyp 0  1.0
+Ebuf_yn  byn  0  vyn 0  1.0
+Ebuf_zp  bzp  0  vzp 0  1.0
+Ebuf_zn  bzn  0  vzn 0  1.0
 
-* X Integrator
+* ============================================================
+* Multipliers (real SKY130 Gilbert cells)
+* ============================================================
+* x*z for y-channel nonlinear term
+XMult_xz  bxp bxn  bzp bzn  mxzp mxzn  vbn_m  vbias_p vcm vdd vss  multiplier
+* x*y for z-channel nonlinear term
+XMult_xy  bxp bxn  byp byn  mxyp mxyn  vbn_m2 vbias_p vcm vdd vss  multiplier
+Vbnm   vbn_m  0 DC {vbn_mult}
+Vbnm2  vbn_m2 0 DC {vbn_mult}
+
+* ============================================================
+* X Channel: dx/dt = σ(y − x)
+* ============================================================
+* Current INTO xn1 (positive side) charges cap → vxp rises
+* Current OUT of xn2 (negative side) discharges cap → vxn falls
+* SPICE: B n+ n- I=val → positive val = current from n+ to n-
+Bx_pos  vcm xn1  I = {gm_sigma} * (V(vyp,vyn) - V(vxp,vxn)) / 2
+Bx_neg  xn2 vcm  I = {gm_sigma} * (V(vyp,vyn) - V(vxp,vxn)) / 2
+
 XIntX  xn1 xn2  vxp vxn  reset vbias_n vcm vdd vss  integrator
 
 * ============================================================
 * Y Channel: dy/dt = ρ·x − x·z − y
-* Gm_rho for +ρx, Gm_unity for −y (swapped outputs)
-* Behavioral VCCS for −x·z (from multiplier)
 * ============================================================
-XGm_rho  vxp vxn  yn1 yn2  vbn_rho   vbias_p vcm vdd vss  gm_cell
-XGm_y    vyp vyn  yn2 yn1  vbn_unity  vbias_p vcm vdd vss  gm_cell
+By_pos  vcm yn1  I = ({gm_rho} * V(vxp,vxn) - {gm_nl} * V(mxzp,mxzn) - {gm_unity} * V(vyp,vyn)) / 2
+By_neg  yn2 vcm  I = ({gm_rho} * V(vxp,vxn) - {gm_nl} * V(mxzp,mxzn) - {gm_unity} * V(vyp,vyn)) / 2
 
-* Multiplier: x × z
-XMult_xz  vxp vxn  vzp vzn  mxzp mxzn  vbn_mult vbias_p vcm vdd vss  multiplier
-
-* Behavioral VCCS: converts multiplier voltage to integrator current
-* Negative sign (subtracts x·z): current flows from yn2 to yn1
-Gxz  yn2 yn1  mxzp mxzn  {gm_nl}
-
-* Y Integrator
 XIntY  yn1 yn2  vyp vyn  reset vbias_n vcm vdd vss  integrator
 
 * ============================================================
 * Z Channel: dz/dt = x·y − β·z
-* Gm_beta for −βz (swapped outputs)
-* Behavioral VCCS for +x·y (from multiplier)
 * ============================================================
-XGm_bz  vzp vzn  zn1 zn2  vbn_beta  vbias_p vcm vdd vss  gm_cell
+Bz_pos  vcm zn1  I = ({gm_nl} * V(mxyp,mxyn) - {gm_beta} * V(vzp,vzn)) / 2
+Bz_neg  zn2 vcm  I = ({gm_nl} * V(mxyp,mxyn) - {gm_beta} * V(vzp,vzn)) / 2
 
-* Multiplier: x × y
-XMult_xy  vxp vxn  vyp vyn  mxyp mxyn  vbn_mult vbias_p vcm vdd vss  multiplier
-
-* Behavioral VCCS: converts multiplier voltage to integrator current
-* Positive sign (adds x·y): current flows from zn1 to zn2
-Gxy  zn1 zn2  mxyp mxyn  {gm_nl}
-
-* Z Integrator
 XIntZ  zn1 zn2  vzp vzn  reset vbias_n vcm vdd vss  integrator
 
 .ends lorenz_core
