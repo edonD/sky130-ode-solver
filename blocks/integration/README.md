@@ -142,6 +142,18 @@ The positive Lyapunov exponent confirms the system is genuinely chaotic, with ne
 | y(t) | 871 mV pp | ~62 units |
 | z(t) | 817 mV pp | ~58 units |
 
+## Bifurcation Analysis
+
+![Bifurcation Diagram](plots/bifurcation_rho.png)
+
+*Bifurcation diagram showing z-maxima as a function of rho. Below rho_c ~ 24.74, the system has a stable fixed point (no chaos). Above this critical value, the system exhibits chaotic dynamics with scattered z-maxima. Our circuit operates at rho_eff = 25.32 (red dashed), placing it 2.3% above the chaos boundary. This narrow margin explains why 3 PVT corners (fs/1.62V) lose chaos — the multiplier gain reduction at those corners pushes rho_eff below rho_c.*
+
+## Coefficient Sensitivity
+
+![Coefficient Sensitivity](plots/coefficient_sensitivity.png)
+
+*Correlation between ideal Lorenz (sigma=10, rho=28, beta=8/3) and systems with perturbed coefficients, measured over 5 Lyapunov times. Left: sigma sensitivity peaks near 10 with gradual decay. Center: rho sensitivity is highly chaotic — correlation fluctuates dramatically because different rho values produce attractors with different lobe-switching patterns. Right: beta sensitivity shows a peak near the ideal value with complex structure. The circuit's operating points (red dashed) achieve >0.90 correlation for sigma, with rho and beta in the chaotic regime where exact correlation is inherently unpredictable.*
+
 ## Design Rationale
 
 ### Bias Generation
