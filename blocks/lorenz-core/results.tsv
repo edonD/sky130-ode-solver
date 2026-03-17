@@ -1,0 +1,7 @@
+step	commit	score	specs_met	notes
+1	12494bd	0.150	1/5	Initial design: real Gm cells, no buffers. No oscillation.
+2	798a14b	0.150	1/5	B-sources + buffers, wrong polarity. No oscillation.
+3	798a14b	0.150	1/5	Fixed B-source polarity. Butterfly visible! Wrong coefficients.
+4	1059835	1.000	5/5	Design τ_L + calibrated coefficients (gm_rho=33, gm_beta=3.05)
+5	b2f5713	1.000	5/5	Fine-tuned: gm_rho=33.5, gm_beta=3.2. Max coeff err 9.6%
+6	6c17558	1.000	5/5	Added ideal RK4 overlay, updated README
