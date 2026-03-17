@@ -183,64 +183,72 @@ def extract_lorenz_signals(data, reset_time_s=None):
 
     return t_post, vx, vy, vz
 
-def compute_correlation(t_circuit, vx, vy, vz, a_scale=0.014):
-    """Compute trajectory correlation vs RK4 over first 5 Lyapunov times."""
-    t_lorenz = (t_circuit - t_circuit[0]) / (T_LORENZ_US * 1e-6)
+def compute_correlation(t_circuit, vx, vy, vz, a_scale=None):
+    """Compute trajectory correlation vs RK4 over first 5 Lyapunov times.
+    Matches the upstream lorenz-core method: x-only, np.corrcoef, estimated a_scale."""
 
-    # Convert circuit voltages to Lorenz units
-    x_circ = vx / a_scale
-    y_circ = vy / a_scale
-    z_circ = vz / a_scale
+    # Estimate a_scale from signal peak (matching upstream method)
+    if a_scale is None:
+        vx_peak = max(abs(vx.max()), abs(vx.min()))
+        a_scale = vx_peak / 18.0 if vx_peak > 1e-4 else 0.014
 
-    # Initial conditions from circuit
+    # Use design time scale
+    tau_L = T_LORENZ_US * 1e-6  # 2.565 µs
+
+    # Add settling margin: skip first 1µs after reset
+    settle_idx = np.searchsorted(t_circuit, t_circuit[0] + 1e-6)
+    t_a = t_circuit[settle_idx:]
+    vx_a = vx[settle_idx:]
+    vy_a = vy[settle_idx:]
+    vz_a = vz[settle_idx:]
+
+    # Convert to Lorenz time and units
+    t_lorenz = (t_a - t_a[0]) / tau_L
+    x_circ = vx_a / a_scale
+    y_circ = vy_a / a_scale
+    z_circ = vz_a / a_scale
+
+    # Initial conditions
     x0 = x_circ[0]
     y0 = y_circ[0]
     z0 = z_circ[0]
 
-    # RK4 reference
-    dt_lorenz = np.median(np.diff(t_lorenz))
-    # Simulate for 5 Lyapunov times (λ_max ≈ 0.9 for Lorenz, so T_lyap ≈ 1.1 LTU)
-    lyap_times = 5
-    t_lyap = 1.0 / 0.9  # ~1.11 Lorenz time units per Lyapunov time
-    t_end = lyap_times * t_lyap
+    # RK4 reference with fine timestep (matching upstream dt=0.001)
+    dt_lor = 0.001
+    lyap_time = 5.52  # 5 Lyapunov times at λ=0.905
+    t_lor_max = t_lorenz[-1]
 
-    n_rk4 = int(t_end / dt_lorenz) + 1
-    if n_rk4 < 10:
+    if t_lor_max < 1.0:
         return 0.0
 
-    rk4 = lorenz_rk4(SIGMA, RHO, BETA, x0, y0, z0, dt_lorenz, n_rk4)
+    n_rk4 = int(min(t_lor_max, 100) / dt_lor) + 1
+    rk4 = lorenz_rk4(SIGMA, RHO, BETA, x0, y0, z0, dt_lor, n_rk4)
+    t_rk4 = np.arange(n_rk4) * dt_lor
 
-    # Resample circuit to match RK4 time points
-    t_rk4 = np.arange(n_rk4) * dt_lorenz
-    mask = t_lorenz <= t_end
+    # Interpolate RK4 to circuit time grid (matching upstream method)
+    t_lor_clip = np.clip(t_lorenz, t_rk4[0], t_rk4[-1])
+    x_rk4_interp = np.interp(t_lor_clip, t_rk4, rk4[:, 0])
+    y_rk4_interp = np.interp(t_lor_clip, t_rk4, rk4[:, 1])
+    z_rk4_interp = np.interp(t_lor_clip, t_rk4, rk4[:, 2])
 
-    if np.sum(mask) < 10:
-        return 0.0
+    # Correlation over first 5 Lyapunov times (x-only, matching upstream)
+    idx_lyap = np.searchsorted(t_lorenz, lyap_time)
+    if idx_lyap < 10:
+        idx_lyap = min(len(t_lorenz), len(t_lorenz) // 2)
 
-    t_c = t_lorenz[mask]
-    xc = x_circ[mask]
-    yc = y_circ[mask]
-    zc = z_circ[mask]
+    if idx_lyap > 10:
+        x_c = x_circ[:idx_lyap]
+        x_r = x_rk4_interp[:idx_lyap]
 
-    # Interpolate circuit to RK4 time grid
-    xc_interp = np.interp(t_rk4, t_c, xc)
-    yc_interp = np.interp(t_rk4, t_c, yc)
-    zc_interp = np.interp(t_rk4, t_c, zc)
+        # Normalize and correlate (matching upstream np.corrcoef)
+        x_c_n = (x_c - np.mean(x_c)) / (np.std(x_c) + 1e-12)
+        x_r_n = (x_r - np.mean(x_r)) / (np.std(x_r) + 1e-12)
+        correlation = float(max(0, np.corrcoef(x_c_n, x_r_n)[0, 1]))
+    else:
+        correlation = 0.0
 
-    # Correlation for each variable
-    def corr(a, b):
-        a = a - np.mean(a)
-        b = b - np.mean(b)
-        denom = np.sqrt(np.sum(a**2) * np.sum(b**2))
-        if denom < 1e-20:
-            return 0.0
-        return np.sum(a * b) / denom
-
-    cx = corr(xc_interp, rk4[:, 0])
-    cy = corr(yc_interp, rk4[:, 1])
-    cz = corr(zc_interp, rk4[:, 2])
-
-    return (cx + cy + cz) / 3.0, rk4, t_rk4
+    # Return full RK4 trajectory for plotting
+    return correlation, rk4, t_rk4, a_scale
 
 def detect_butterfly(vx, vz):
     """Detect two-lobed butterfly attractor in x-z plane."""
@@ -709,14 +717,13 @@ def main():
     # Phase 2: Compute metrics
     print("\n[2/4] Computing metrics...")
 
-    a_scale = 0.014  # from lorenz-core
-
-    corr_result = compute_correlation(t, vx, vy, vz, a_scale)
+    corr_result = compute_correlation(t, vx, vy, vz)
     if isinstance(corr_result, tuple):
-        correlation, rk4_traj, t_rk4 = corr_result
+        correlation, rk4_traj, t_rk4, a_scale = corr_result
     else:
         correlation = corr_result
         rk4_traj, t_rk4 = None, None
+        a_scale = 0.014
 
     butterfly = detect_butterfly(vx, vz)
     chaos_duration = compute_chaos_duration(t, vx, vy, vz)
