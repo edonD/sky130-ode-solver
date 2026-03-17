@@ -1,13 +1,20 @@
 {
-  "c_int_pf": 5.132521710566834,
-  "unity_gain_freq_mhz": 3.1009112492252533,
+  "c_int_pf": 5.13,
+  "dc_gain_db": 138.9,
+  "unity_gain_freq_mhz": 3.1,
+  "output_swing_mv": 1327.1,
   "leakage_mv_per_us": 0.0,
-  "dc_gain_db": 138.8576343732634,
-  "output_swing_mv": 1327.1035,
-  "reset_time_ns": 1.3349000000000657,
-  "charge_inject_mv": 2.7527000000000523,
-  "power_uw": 1.7118896400000002e-05,
+  "reset_time_ns": 1.33,
+  "charge_inject_mv": 2.75,
+  "power_uw": 0.0,
+  "tau_us": 0.051,
   "score": 1.0,
   "specs_passed": 7,
-  "specs_total": 7
+  "specs_total": 7,
+  "pvt_corners_pass": 45,
+  "pvt_corners_total": 45,
+  "worst_reset_time_ns": 9.2,
+  "worst_reset_corner": "ss/-40C/1.62V",
+  "worst_charge_inject_mv": 4.09,
+  "worst_ci_corner": "ss/-40C/1.98V"
 }
