@@ -11,7 +11,7 @@
 | Trajectory correlation | > 0.90 | 0.934 | +3.8% | PASS |
 | Two-lobed attractor | = 1 | 1 | — | PASS |
 | Lyapunov positive | = 1 | 1 (λ=0.65) | — | PASS |
-| Coefficient error | < 10% | 9.8% | +0.2% | PASS |
+| Coefficient error | < 10% | 9.6% | +0.4% | PASS |
 | Power | < 3 mW | 0.54 mW | +82% | PASS |
 
 ### Effective Lorenz Coefficients
@@ -19,14 +19,14 @@
 | Parameter | Target | Measured | Error |
 |-----------|--------|----------|-------|
 | σ (sigma) | 10.0 | 10.18 | 1.8% |
-| ρ (rho) | 28.0 | 25.27 | 9.8% |
-| β (beta) | 2.667 | 2.45 | 8.2% |
+| ρ (rho) | 28.0 | 25.30 | 9.6% |
+| β (beta) | 2.667 | 2.53 | 5.1% |
 
 ## Phase Portraits
 
 ![Phase Portraits](plots/phase_portraits.png)
 
-*Left: x-z butterfly (the canonical Lorenz view). Center: x-y showing the two fixed-point spirals. Right: y-z.*
+*All three Lorenz phase portraits with ideal RK4 overlay (black). Left: x-z butterfly (canonical Lorenz view). Center: x-y showing the two fixed-point spirals. Right: y-z. Circuit (color) closely matches ideal (black) in all projections.*
 
 ## Time Series
 
@@ -110,8 +110,8 @@ The behavioral B-sources use slightly adjusted coefficients to compensate for th
 | Coefficient | Lorenz Value | Circuit Gm Ratio | Calibration |
 |-------------|-------------|-------------------|-------------|
 | σ | 10 | 10 × gm_base | None needed |
-| ρ | 28 | 33 × gm_base | +18% to compensate multiplier xz excess |
-| β | 8/3 | 3.05 × gm_base | +14% to compensate multiplier xy excess |
+| ρ | 28 | 33.5 × gm_base | +20% to compensate multiplier xz excess |
+| β | 8/3 | 3.2 × gm_base | +20% to compensate multiplier xy excess |
 | unity | 1 | 1 × gm_base | None needed |
 
 ## Power Budget
