@@ -56,15 +56,14 @@ pip3 install --break-system-packages \
   optuna cma scikit-optimize
 
 # ============================================================
-# 4. Node.js + Claude Code CLI
+# 4. Node.js (needed for Claude Code CLI — user installs claude manually)
 # ============================================================
-echo "=== Installing Claude Code CLI ==="
+echo "=== Installing Node.js ==="
 curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
 apt-get install -y nodejs
-npm install -g @anthropic-ai/claude-code
 
 # ============================================================
-# 5. SKY130 PDK models
+# 5. SKY130 PDK models (DO NOT modify any .spice/.lib files)
 # ============================================================
 echo "=== Setting up SKY130 PDK ==="
 WORK=/home/ubuntu/workspace
