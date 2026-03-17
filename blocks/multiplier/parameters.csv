@@ -1,1 +1,9 @@
 name,min,max,scale
+tail_w,40u,160u,log
+tail_l,0.5u,2u,log
+bot_w,10u,40u,log
+bot_l,0.5u,2u,log
+top_w,5u,20u,log
+top_l,0.3u,1u,log
+rload_val,5k,20k,log
+rdegen_val,200,2k,log

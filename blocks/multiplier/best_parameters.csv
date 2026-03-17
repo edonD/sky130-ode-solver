@@ -1,0 +1,9 @@
+name,value
+tail_w,80e-6
+tail_l,1e-6
+bot_w,20e-6
+bot_l,1e-6
+top_w,10e-6
+top_l,0.5e-6
+rload_val,12000
+rdegen_val,800

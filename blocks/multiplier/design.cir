@@ -1,21 +1,50 @@
 * SKY130 Four-Quadrant Analog Multiplier
-* Part of the Analog ODE Solver project
+* Topology: Resistive-attenuated Gilbert cell for wide-range linearity
 *
-* Required interface (do not change port order):
-*   .subckt multiplier xp xn yp yn outp outn vbias_n vbias_p vcm vdd vss
-*
-* You design the internals. This is just a placeholder.
+* Both X and Y inputs are attenuated through resistive dividers
+* before reaching the Gilbert cell core, keeping the transistors
+* in their linear operating region.
 
 .subckt multiplier xp xn yp yn outp outn vbias_n vbias_p vcm vdd vss
 
-* TODO: Design your multiplier here.
-* Requirements:
-*   - Four-quadrant: Vout ∝ (xp-xn) × (yp-yn)
-*   - Linear over ±300mV on both inputs
-*   - See specs.json for targets
+.param tail_w = 80u
+.param tail_l = 1u
+.param bot_w = 20u
+.param bot_l = 1u
+.param top_w = 10u
+.param top_l = 0.5u
+.param rload_val = 12k
+.param rdegen_val = 800
 
-* Placeholder: dummy (replace with your design)
-R1 outp vcm 100k
-R2 outn vcm 100k
+* === X input attenuators: ~5:1 (+-300mV to +-60mV) ===
+Rax1 xp xp_int 4k
+Rax2 xp_int vcm 1k
+Rax3 xn xn_int 4k
+Rax4 xn_int vcm 1k
+
+* === Y input attenuators: ~2:1 (+-300mV to +-150mV) ===
+Ray1 yp yp_int 1k
+Ray2 yp_int vcm 1k
+Ray3 yn yn_int 1k
+Ray4 yn_int vcm 1k
+
+* === Tail current source ===
+Xtail tail_node vbias_n vss vss sky130_fd_pr__nfet_01v8 w={tail_w} l={tail_l}
+
+* === Bottom differential pair (attenuated Y input) with degeneration ===
+Xbot1 mid1 yp_int src_b1 vss sky130_fd_pr__nfet_01v8 w={bot_w} l={bot_l}
+Xbot2 mid2 yn_int src_b2 vss sky130_fd_pr__nfet_01v8 w={bot_w} l={bot_l}
+Rdeg1 src_b1 tail_node {rdegen_val}
+Rdeg2 src_b2 tail_node {rdegen_val}
+
+* === Top quad (attenuated X input) ===
+Xtop1 outn xp_int mid1 vss sky130_fd_pr__nfet_01v8 w={top_w} l={top_l}
+Xtop2 outp xn_int mid1 vss sky130_fd_pr__nfet_01v8 w={top_w} l={top_l}
+Xtop3 outp xp_int mid2 vss sky130_fd_pr__nfet_01v8 w={top_w} l={top_l}
+Xtop4 outn xn_int mid2 vss sky130_fd_pr__nfet_01v8 w={top_w} l={top_l}
+
+* === Load resistors ===
+RL1 vdd outp {rload_val}
+RL2 vdd outn {rload_val}
 
 .ends multiplier
