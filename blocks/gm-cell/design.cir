@@ -8,12 +8,12 @@
 
 * Optimized parameters
 .param W_in=3.5e-05
-.param L_in=1e-06
+.param L_in=1.5e-06
 .param W_load=2e-05
 .param L_load=4e-06
 .param W_tail=9e-05
 .param L_tail=5e-07
-.param Rs_deg=5200
+.param Rs_deg=4800
 
 XM1 outn inp s1 vss sky130_fd_pr__nfet_01v8 W={W_in} L={L_in}
 XM2 outp inn s2 vss sky130_fd_pr__nfet_01v8 W={W_in} L={L_in}

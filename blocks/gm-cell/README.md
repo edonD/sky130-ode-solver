@@ -6,12 +6,12 @@ Programmable OTA (Operational Transconductance Amplifier) for the SKY130 analog 
 
 | Spec | Target | Measured | Margin | Status |
 |------|--------|----------|--------|--------|
-| gm_us | >50 µS | 56.6 | +13.2% | PASS |
-| gm_ratio | >30 | 49.6 | +65.5% | PASS |
-| thd_pct | <1% | 0.73% | +27.0% | PASS |
+| gm_us | >50 µS | 58.3 | +16.6% | PASS |
+| gm_ratio | >30 | 52.2 | +74.1% | PASS |
+| thd_pct | <1% | 0.81% | +18.8% | PASS |
 | bw_mhz | >10 MHz | >10 GHz | >>100% | PASS |
-| dc_gain_db | >40 dB | 43.7 dB | +9.3% | PASS |
-| power_uw | <200 µW | 71 µW | +64.5% | PASS |
+| dc_gain_db | >40 dB | 44.6 dB | +11.5% | PASS |
+| power_uw | <200 µW | 71 µW | +64.6% | PASS |
 
 ## Key Plots
 
@@ -40,12 +40,12 @@ Transient response with ±200mV differential sinusoidal input at 100kHz into a 1
 | Parameter | Value | Description |
 |-----------|-------|-------------|
 | W_in | 35 µm | Input diff pair NMOS width |
-| L_in | 1 µm | Input diff pair NMOS length |
+| L_in | 1.5 µm | Input diff pair NMOS length (long for gain + matching) |
 | W_load | 20 µm | PMOS load width |
 | L_load | 4 µm | PMOS load length (long for high ro) |
 | W_tail | 90 µm | Tail current source width |
 | L_tail | 0.5 µm | Tail current source length |
-| Rs_deg | 5.2 kΩ | Source degeneration resistor (each side) |
+| Rs_deg | 4.8 kΩ | Source degeneration resistor (each side) |
 
 ## Design Rationale
 
@@ -111,7 +111,7 @@ At nominal bias: Id ≈ 17 µA per side (total 35 µA), well within headroom.
 
 ## Known Limitations
 
-1. **Gm margin is moderate**: Gm = 56.6 µS vs 50 µS target (+13.2% margin). PVT corners may still push this below spec at worst case.
+1. **Gm margin is good**: Gm = 58.3 µS vs 50 µS target (+16.6% margin). PVT corners (especially cold/fs) will reduce Gm; the bias generator must track temperature.
 
 2. **DC gain margin is moderate**: 43.8 dB vs 40 dB (+9.5%). At high temperature or slow process corners, gain may drop.
 
@@ -119,7 +119,14 @@ At nominal bias: Id ≈ 17 µA per side (total 35 µA), well within headroom.
 
 4. **BW measurement uses voltage gain**: The transconductance BW was measured via loaded voltage gain (10kΩ). The actual Gm bandwidth is >10 GHz for this topology, but the measurement method may not capture all parasitic effects.
 
-5. **No PVT or Monte Carlo validation yet**: All measurements are at nominal corner (tt, 24°C, 1.8V). Corner analysis is needed.
+5. **PVT sensitivity**: Preliminary PVT analysis shows:
+   - **Cold (-40°C)**: Gm drops to 36.5 µS, THD rises to 11.8% (FAIL). Threshold voltage increases, reducing tail current.
+   - **Hot (175°C)**: DC gain drops to 37.5 dB (FAIL). Output resistance decreases with temperature.
+   - **ss corner**: THD rises to 1.9% (FAIL). Slow NMOS reduces degeneration effectiveness.
+   - **fs corner**: Gm drops to 47.2 µS, THD rises to 2.7% (FAIL).
+   - **ff/sf corners**: All specs pass with margin.
+
+   **Mitigation**: The bias generator (separate block) should provide temperature-compensated Vbias_n. With proper PTAT/CTAT bias tracking, the tail current can be maintained constant across temperature, which would resolve the cold and hot issues. Process corner sensitivity may require a bandgap-referenced bias or trimming.
 
 ## Experiment History
 
@@ -128,3 +135,4 @@ At nominal bias: Id ≈ 17 µA per side (total 35 µA), well within headroom.
 | 1 | 0.800 | 5/6 | Rs=5500, L_in=1µ. Gm ratio failing (19.6x) |
 | 2 | 1.000 | 6/6 | Extended vbias_n range for ratio. All specs pass! |
 | 3 | 1.000 | 6/6 | Improved margins: Wi=35µ, Wt=90µ, Rs=5.2kΩ. Gm=56.6 (+13%) |
+| 4 | 1.000 | 6/6 | Best margins: Li=1.5µ, Rs=4.8kΩ. Gm=58.3(+17%), Gain=44.6(+12%), THD=0.81% |
