@@ -92,6 +92,12 @@
 
 5. **Passive design** — No DC power consumption. All gain comes from the upstream OTA; the integrator is just a capacitor with reset.
 
+## PVT Performance Plot
+
+![PVT Summary](plots/pvt_summary.png)
+
+*Left: Reset time at -40C across process corners and supply voltages. All corners pass the 10ns spec. Worst case: ss/-40C/1.62V = 9.20ns. Right: Charge injection at -40C. All corners pass the 5mV spec. Worst case: ss/-40C/1.98V = 4.09mV.*
+
 ## Key Plots
 
 ### Integration Ramp
