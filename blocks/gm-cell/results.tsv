@@ -15,3 +15,4 @@ step	commit	score	specs_met	notes
 14	stability	1.000	6/6	50+ random perturbations confirmed stable optimum at 19.1% min margin
 15	multi-tanh	-	-	Tried multi-tanh: worse THD (4%). Simple topology is optimal.
 16	converged	1.000	6/6	Design converged. 400+ evals. No improvement possible with simple topology.
+17	random-100	1.000	6/6	100 random samples: 0 feasible. Confirms design is in narrow optimal region.
