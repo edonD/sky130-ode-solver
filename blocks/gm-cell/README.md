@@ -1,4 +1,4 @@
-# Gm Cell — [STATUS: 6/6 specs passing, score 1.00]
+# Gm Cell — [STATUS: 6/6 specs passing, score 1.00, min margin 16%]
 
 Programmable OTA (Operational Transconductance Amplifier) for the SKY130 analog Lorenz attractor solver.
 
@@ -6,12 +6,12 @@ Programmable OTA (Operational Transconductance Amplifier) for the SKY130 analog 
 
 | Spec | Target | Measured | Margin | Status |
 |------|--------|----------|--------|--------|
-| gm_us | >50 µS | 58.7 | +17.4% | PASS |
-| gm_ratio | >30 | 53.5 | +78.4% | PASS |
-| thd_pct | <1% | 0.85% | +15.3% | PASS |
+| gm_us | >50 µS | 58.0 | +16.0% | PASS |
+| gm_ratio | >30 | 53.5 | +78.2% | PASS |
+| thd_pct | <1% | 0.84% | +16.5% | PASS |
 | bw_mhz | >10 MHz | >10 GHz | >>100% | PASS |
-| dc_gain_db | >40 dB | 45.7 dB | +14.1% | PASS |
-| power_uw | <200 µW | 70 µW | +64.8% | PASS |
+| dc_gain_db | >40 dB | 46.9 dB | +17.2% | PASS |
+| power_uw | <200 µW | 70 µW | +65.0% | PASS |
 
 ## Key Plots
 
@@ -48,12 +48,12 @@ PVT analysis at fixed Vbias_n = 0.6V. Green = passing, red = failing. The cold c
 | Parameter | Value | Description |
 |-----------|-------|-------------|
 | W_in | 35 µm | Input diff pair NMOS width |
-| L_in | 2.2 µm | Input diff pair NMOS length (long for gain + matching) |
+| L_in | 3.0 µm | Input diff pair NMOS length (long for gain + matching) |
 | W_load | 25 µm | PMOS load width |
 | L_load | 4 µm | PMOS load length (long for high ro) |
 | W_tail | 90 µm | Tail current source width |
 | L_tail | 0.5 µm | Tail current source length |
-| Rs_deg | 4.5 kΩ | Source degeneration resistor (each side) |
+| Rs_deg | 4.3 kΩ | Source degeneration resistor (each side) |
 
 ## Design Rationale
 
@@ -146,4 +146,5 @@ At nominal bias: Id ≈ 17 µA per side (total 35 µA), well within headroom.
 | 4 | 1.000 | 6/6 | Li=1.5µ, Rs=4.8kΩ. Gm=58.3(+17%), Gain=44.6(+12%), THD=0.81% |
 | 5 | 1.000 | 6/6 | Li=1.7µ, Rs=4.6kΩ. Min margin=12.1% across all specs |
 | 6 | 1.000 | 6/6 | Li=1.8µ, Wl=25µ, Rs=4.6kΩ. Min margin=12.5%. Gain=45dB |
-| 7 | 1.000 | 6/6 | Final: Li=2.2µ, Rs=4.5kΩ. Min margin=14.1%. Gain=45.7dB. Best overall. |
+| 7 | 1.000 | 6/6 | Li=2.2µ, Rs=4.5kΩ. Min margin=14.1%. Gain=45.7dB |
+| 8 | 1.000 | 6/6 | **Final**: Li=3.0µ, Rs=4.3kΩ. Min margin **16.0%**. Gain=46.9dB. Best. |
