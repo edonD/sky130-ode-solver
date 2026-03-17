@@ -1,0 +1,30 @@
+{
+  "gm_cell": {
+    "gm_us": 60.03188265,
+    "gm_max_us": 68.87910958333333,
+    "gm_min_us": 1.3145869058333333,
+    "thd_pct": 0.7888929437675137,
+    "bw_mhz": 100000.0,
+    "rout_kohm": 4018,
+    "power_uw": 73.90022400000001,
+    "source": "C:\\Users\\DD\\OneDrive\\Programming\\willAI\\sky130-ode-solver\\blocks\\gm-cell\\measurements.json"
+  },
+  "integrator": {
+    "c_int_pf": 5.13,
+    "tau_us": 0.051,
+    "dc_gain_db": 138.9,
+    "leakage_mv_per_us": 0.0,
+    "reset_time_ns": 1.33,
+    "charge_inject_mv": 2.75,
+    "power_uw": 0.0,
+    "source": "C:\\Users\\DD\\OneDrive\\Programming\\willAI\\sky130-ode-solver\\blocks\\integrator\\measurements.json"
+  },
+  "multiplier": {
+    "k_mult": 1.2331650456325782,
+    "linearity_error_pct": 1.048459551643066,
+    "bw_mhz": 1601.582698864652,
+    "output_offset_mv": 0.0,
+    "power_uw": 85.72311,
+    "source": "C:\\Users\\DD\\OneDrive\\Programming\\willAI\\sky130-ode-solver\\blocks\\multiplier\\measurements.json"
+  }
+}

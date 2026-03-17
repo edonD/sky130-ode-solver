@@ -172,7 +172,7 @@ def propagate_measurements():
 
     print("\n--- Propagating interface values ---\n")
 
-    # Gm-cell → Lorenz-core: push Gm range, linearity, bandwidth
+    # Gm-cell -> Lorenz-core: push Gm range, linearity, bandwidth
     if statuses["gm-cell"]["state"] == "COMPLETE":
         meas = statuses["gm-cell"]["measurements"]
         if meas:
@@ -194,9 +194,9 @@ def propagate_measurements():
                 upstream = existing
             with open(config_path, "w") as f:
                 json.dump(upstream, f, indent=2)
-            print(f"  gm-cell → lorenz-core: wrote {config_path}")
+            print(f"  gm-cell -> lorenz-core: wrote {config_path}")
 
-    # Integrator → Lorenz-core: push time constant, leakage, reset time
+    # Integrator -> Lorenz-core: push time constant, leakage, reset time
     if statuses["integrator"]["state"] == "COMPLETE":
         meas = statuses["integrator"]["measurements"]
         if meas:
@@ -218,9 +218,9 @@ def propagate_measurements():
                 upstream_int = existing
             with open(config_path, "w") as f:
                 json.dump(upstream_int, f, indent=2)
-            print(f"  integrator → lorenz-core: wrote {config_path}")
+            print(f"  integrator -> lorenz-core: wrote {config_path}")
 
-    # Multiplier → Lorenz-core: push gain constant, linearity, bandwidth
+    # Multiplier -> Lorenz-core: push gain constant, linearity, bandwidth
     if statuses["multiplier"]["state"] == "COMPLETE":
         meas = statuses["multiplier"]["measurements"]
         if meas:
@@ -240,9 +240,9 @@ def propagate_measurements():
                 upstream_mult = existing
             with open(config_path, "w") as f:
                 json.dump(upstream_mult, f, indent=2)
-            print(f"  multiplier → lorenz-core: wrote {config_path}")
+            print(f"  multiplier -> lorenz-core: wrote {config_path}")
 
-    # Lorenz-core → Integration: push trajectory characteristics
+    # Lorenz-core -> Integration: push trajectory characteristics
     if statuses["lorenz-core"]["state"] == "COMPLETE":
         meas = statuses["lorenz-core"]["measurements"]
         if meas:
@@ -263,7 +263,7 @@ def propagate_measurements():
                 upstream_core = existing
             with open(config_path, "w") as f:
                 json.dump(upstream_core, f, indent=2)
-            print(f"  lorenz-core → integration: wrote {config_path}")
+            print(f"  lorenz-core -> integration: wrote {config_path}")
 
     print("\n--- Propagation complete ---\n")
 
