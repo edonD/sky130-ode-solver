@@ -3,3 +3,4 @@ step	commit	score	specs_met	notes
 2	all-pass	1.000	6/6	All specs passing! Rs=5500 Li=1u Ll=4u. Extended vbias range for ratio.
 3	margin-improve	1.000	6/6	Improved margins: Wi=35u Wt=90u Rs=5200. Gm=56.6 THD=0.73%
 4	best-margins	1.000	6/6	Li=1.5u Rs=4800: Gm=58.3 THD=0.81% Gain=44.6dB. Best margins.
+5	cascode-test	1.000	6/6	Tried NMOS cascode: worse (headroom). Sticking with simple topology.

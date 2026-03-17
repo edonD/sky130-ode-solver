@@ -26,6 +26,9 @@ XMT ntail vbias_n vss vss sky130_fd_pr__nfet_01v8 W={W_tail} L={L_tail}
 XMP1 outn pcm vdd vdd sky130_fd_pr__pfet_01v8 W={W_load} L={L_load}
 XMP2 outp pcm vdd vdd sky130_fd_pr__pfet_01v8 W={W_load} L={L_load}
 
-Ecmfb pcm 0 VALUE={V(vbias_p) + 50*((V(outp)+V(outn))/2 - V(vcm))}
+* Common-mode feedback (ideal behavioral with RC filter for stability)
+Ecmfb pcm_int 0 VALUE={V(vbias_p) + 20*((V(outp)+V(outn))/2 - V(vcm))}
+Rcmfb pcm_int pcm 1k
+Ccmfb pcm 0 10p
 
 .ends gm_cell
