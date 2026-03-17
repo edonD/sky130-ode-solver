@@ -1,0 +1,55 @@
+* SKY130 Analog ODE Solver — Full Integration
+* Complete Lorenz attractor analog computer with bias generation,
+* output buffers, and startup sequencing.
+*
+* Top-level interface:
+*   .subckt ode_solver vxp_buf vxn_buf vyp_buf vyn_buf vzp_buf vzn_buf reset vdd vss
+
+.include ../lorenz-core/design.cir
+.include ../integrator/design.cir
+.include ../multiplier/design.cir
+
+.subckt ode_solver vxp_buf vxn_buf vyp_buf vyn_buf vzp_buf vzn_buf reset vdd vss
+
+* ============================================================
+* Bias Generation
+* ============================================================
+* VCM = VDD/2 = 0.9V — resistive divider
+Rvcm1 vdd vcm 100k
+Rvcm2 vcm vss 100k
+Cvcm  vcm vss 10p
+
+* NMOS bias for integrator reset switches (not critical — just needs stable voltage)
+* Use a diode-connected NMOS to generate ~0.6V
+Xbias_n vbias_n vbias_n vss vss sky130_fd_pr__nfet_01v8 W=10u L=1u
+Rbias_n vdd vbias_n 50k
+Cbias_n vbias_n vss 5p
+
+* PMOS bias — simple resistive divider for multiplier loads
+Rbp1 vdd vbias_p 50k
+Rbp2 vbias_p vss 50k
+Cbp  vbias_p vss 5p
+
+* ============================================================
+* Lorenz Core Instance
+* ============================================================
+XCore vxp vxn vyp vyn vzp vzn reset vbias_n vbias_p vcm vdd vss lorenz_core
+
+* ============================================================
+* Startup Perturbation
+* ============================================================
+* Small differential current kick on x-channel after reset release
+* This pushes x off the unstable origin to initiate chaos
+Bkick vcm vxp I = 1u * (V(reset) < 0.5 ? (time < 520n ? 1 : 0) : 0)
+
+* ============================================================
+* Output Buffers (behavioral — isolate core from external loads)
+* ============================================================
+Ebuf_xp vxp_buf 0 vxp 0 1.0
+Ebuf_xn vxn_buf 0 vxn 0 1.0
+Ebuf_yp vyp_buf 0 vyp 0 1.0
+Ebuf_yn vyn_buf 0 vyn 0 1.0
+Ebuf_zp vzp_buf 0 vzp 0 1.0
+Ebuf_zn vzn_buf 0 vzn 0 1.0
+
+.ends ode_solver
