@@ -1,0 +1,27 @@
+* Full Integration Simulation — tt/175C/1.8V
+.lib "sky130_models/sky130.lib.spice" tt
+
+.include design.cir
+
+* Top-level instantiation
+XTop vxp_buf vxn_buf vyp_buf vyn_buf vzp_buf vzn_buf reset vdd vss ode_solver
+
+* Supply
+Vdd vdd 0 DC 1.8
+Vss vss 0 DC 0
+
+* Reset: high for 500ns, then low
+Vrst reset 0 DC 0 PWL(0 1.8 500n 1.8 501n 0)
+
+* Transient
+.tran 1n 80000n 0 1n
+.options method=gear maxord=3
+
+* Save data
+.control
+run
+wrdata data_pvt_tt_175_180.txt v(vxp_buf) v(vxn_buf) v(vyp_buf) v(vyn_buf) v(vzp_buf) v(vzn_buf) v(vdd) i(Vdd)
+quit
+.endc
+
+.end

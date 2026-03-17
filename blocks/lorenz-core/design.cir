@@ -34,8 +34,8 @@
 * K_mult = 1.233 V^-1 → gm_nl = gm_base / (a_scale * 1.233)
 .param gm_nl = {gm_base / (a_scale * 1.233)}
 
-* Multiplier bias
-.param vbn_mult = 0.64
+* Multiplier bias — increased from 0.64 for PVT robustness at slow corners
+.param vbn_mult = 0.70
 
 * ============================================================
 * Voltage buffers (isolate integrator caps from multiplier loading)

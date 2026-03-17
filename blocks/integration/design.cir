@@ -14,21 +14,17 @@
 * ============================================================
 * Bias Generation
 * ============================================================
-* VCM = VDD/2 = 0.9V — resistive divider
-Rvcm1 vdd vcm 100k
-Rvcm2 vcm vss 100k
-Cvcm  vcm vss 10p
+* VCM = VDD/2 — LOW IMPEDANCE behavioral source
+* Critical: the B-sources in lorenz-core inject/sink current from VCM,
+* so it must be a stiff node (not a resistive divider)
+Evcm vcm 0 VOL = {V(vdd) / 2}
 
-* NMOS bias for integrator reset switches (not critical — just needs stable voltage)
-* Use a diode-connected NMOS to generate ~0.6V
-Xbias_n vbias_n vbias_n vss vss sky130_fd_pr__nfet_01v8 W=10u L=1u
-Rbias_n vdd vbias_n 50k
-Cbias_n vbias_n vss 5p
+* NMOS bias for integrator reset switches
+* 0.6V — sufficient for switch overdrive across PVT
+Evbn vbias_n 0 VOL = {0.6}
 
-* PMOS bias — simple resistive divider for multiplier loads
-Rbp1 vdd vbias_p 50k
-Rbp2 vbias_p vss 50k
-Cbp  vbias_p vss 5p
+* PMOS bias — tracks VDD for PVT robustness
+Evbp vbias_p 0 VOL = {V(vdd) / 2}
 
 * ============================================================
 * Lorenz Core Instance
@@ -38,8 +34,9 @@ XCore vxp vxn vyp vyn vzp vzn reset vbias_n vbias_p vcm vdd vss lorenz_core
 * ============================================================
 * Startup Perturbation
 * ============================================================
-* Small differential current kick on x-channel after reset release
-* This pushes x off the unstable origin to initiate chaos
+* Differential current kick on x-channel after reset release
+* Pushes x off the unstable origin to initiate chaos
+* Duration: 20ns (reset releases at 500ns, kick ends at 520ns)
 Bkick vcm vxp I = 1u * (V(reset) < 0.5 ? (time < 520n ? 1 : 0) : 0)
 
 * ============================================================
