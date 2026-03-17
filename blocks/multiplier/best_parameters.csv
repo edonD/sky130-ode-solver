@@ -5,5 +5,5 @@ bot_w,20e-6
 bot_l,1e-6
 top_w,10e-6
 top_l,0.5e-6
-rload_val,12000
+rload_val,14000
 rdegen_val,800

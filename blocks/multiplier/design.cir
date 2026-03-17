@@ -13,7 +13,7 @@
 .param bot_l = 1u
 .param top_w = 10u
 .param top_l = 0.5u
-.param rload_val = 12k
+.param rload_val = 14k
 .param rdegen_val = 800
 
 * === X input attenuators: ~5:1 (+-300mV to +-60mV) ===
