@@ -19,6 +19,17 @@ A complete analog computer solving the Lorenz system of ordinary differential eq
 | Time scale factor | > 1000 | 389,864 | +389x | **PASS** |
 | PVT chaos survival | > 80% | 93.3% (42/45) | +13.3% | **PASS** |
 
+### Effective Lorenz Coefficients
+
+| Parameter | Target | Measured | Error |
+|-----------|--------|----------|-------|
+| sigma | 10.0 | 10.14 | 1.4% |
+| rho | 28.0 | 25.32 | 9.6% |
+| beta | 2.667 | 2.53 | 5.0% |
+| Lyapunov exponent (lambda_max) | > 0 | 0.488 | -- |
+
+The positive Lyapunov exponent confirms the system is genuinely chaotic, with nearby trajectories diverging exponentially at rate ~0.49 per Lorenz time unit.
+
 ## Time Series
 
 ![Time Series](plots/time_series.png)

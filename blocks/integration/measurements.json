@@ -8,6 +8,10 @@
   "x_swing_mv": 601.7,
   "y_swing_mv": 870.9,
   "z_swing_mv": 816.9,
+  "sigma_eff": 10.144,
+  "rho_eff": 25.316,
+  "beta_eff": 2.534,
+  "lyapunov_exponent": 0.488,
   "score": 1.0,
   "specs_passed": 6,
   "specs_total": 6

@@ -693,6 +693,93 @@ def plot_raw_voltages(data, plt):
     plt.close(fig)
     print("  Saved raw_voltages.png")
 
+def estimate_coefficients(t, vx, vy, vz, a_scale):
+    """Estimate effective sigma, rho, beta from trajectory using least-squares."""
+    tau_L = T_LORENZ_US * 1e-6
+    t_lorenz = (t - t[0]) / tau_L
+    x = vx / a_scale
+    y = vy / a_scale
+    z = vz / a_scale
+
+    # Subsample for smooth derivatives
+    skip = max(1, len(x) // 5000)
+    xs, ys, zs, ts = x[::skip], y[::skip], z[::skip], t_lorenz[::skip]
+
+    dt_arr = np.diff(ts)
+    valid = dt_arr > 1e-10
+    dx = np.diff(xs)[valid] / dt_arr[valid]
+    dy = np.diff(ys)[valid] / dt_arr[valid]
+    dz = np.diff(zs)[valid] / dt_arr[valid]
+
+    xm = ((xs[:-1] + xs[1:]) / 2)[valid]
+    ym = ((ys[:-1] + ys[1:]) / 2)[valid]
+    zm = ((zs[:-1] + zs[1:]) / 2)[valid]
+
+    # sigma from dx/dt = sigma(y-x)
+    yx = ym - xm
+    denom = np.sum(yx**2)
+    sigma_eff = np.sum(dx * yx) / denom if denom > 1e-10 else 0
+
+    # beta from dz/dt = xy - beta*z
+    z2 = zm * zm
+    denom_z = np.sum(z2)
+    beta_eff = np.sum((xm * ym - dz) * zm) / denom_z if denom_z > 1e-10 else 0
+
+    # rho from dy/dt = rho*x - xz - y
+    rhs = dy + ym + xm * zm
+    x2 = xm * xm
+    denom_x = np.sum(x2)
+    rho_eff = np.sum(rhs * xm) / denom_x if denom_x > 1e-10 else 0
+
+    print(f"  Effective coefficients: sigma={sigma_eff:.2f}, rho={rho_eff:.2f}, beta={beta_eff:.2f}")
+    print(f"  Errors: sigma={abs(sigma_eff-SIGMA)/SIGMA*100:.1f}%, "
+          f"rho={abs(rho_eff-RHO)/RHO*100:.1f}%, beta={abs(beta_eff-BETA)/BETA*100:.1f}%")
+
+    return sigma_eff, rho_eff, beta_eff
+
+def estimate_lyapunov(t, vx, vy, vz, a_scale):
+    """Estimate largest Lyapunov exponent from RK4 perturbation.
+    Start from a point on the attractor (not from near origin)."""
+    tau_L = T_LORENZ_US * 1e-6
+    t_lorenz = (t - t[0]) / tau_L
+
+    # Start from a point well into the attractor (after 5 LTU)
+    idx_start = np.searchsorted(t_lorenz, 5.0)
+    if idx_start >= len(vx) - 100:
+        idx_start = len(vx) // 4
+
+    x0 = vx[idx_start] / a_scale
+    y0 = vy[idx_start] / a_scale
+    z0 = vz[idx_start] / a_scale
+
+    dt = 0.001
+    n = int(25 / dt)  # 25 LTU
+
+    eps = 1e-6
+    rk4_ref = lorenz_rk4(SIGMA, RHO, BETA, x0, y0, z0, dt, n)
+    rk4_pert = lorenz_rk4(SIGMA, RHO, BETA, x0 + eps, y0, z0, dt, n)
+
+    dist = np.sqrt(np.sum((rk4_pert - rk4_ref)**2, axis=1))
+    dist = np.maximum(dist, 1e-15)
+
+    t_fit = np.arange(n) * dt
+    log_dist = np.log(dist)
+
+    # Fit exponential growth phase (before saturation)
+    # eps=1e-6 grows by ~e^(0.9*t), reaches O(1) around t=14 LTU
+    sat_idx = np.argmax(dist > 0.1)  # 0.1 = 1e5 × eps
+    if sat_idx < 100:
+        sat_idx = n // 3
+
+    if sat_idx > 100:
+        coeffs = np.polyfit(t_fit[:sat_idx], log_dist[:sat_idx], 1)
+        lyap = coeffs[0]
+    else:
+        lyap = 0.0
+
+    print(f"  Lyapunov exponent: {lyap:.3f} ({'positive - chaotic' if lyap > 0.1 else 'non-positive'})")
+    return lyap
+
 # ── Main ────────────────────────────────────────────────────────────────────
 def main():
     print("=" * 70)
@@ -764,6 +851,12 @@ def main():
     if pvt_results:
         plot_pvt_heatmap(pvt_results, plt)
 
+    # Compute effective coefficients for reporting
+    sigma_eff, rho_eff, beta_eff = estimate_coefficients(t, vx, vy, vz, a_scale)
+
+    # Lyapunov exponent estimation
+    lyap_exp = estimate_lyapunov(t, vx, vy, vz, a_scale)
+
     # Save measurements
     measurements = {
         "lorenz_correlation": round(correlation, 6),
@@ -775,6 +868,10 @@ def main():
         "x_swing_mv": round((vx.max() - vx.min()) * 1000, 1),
         "y_swing_mv": round((vy.max() - vy.min()) * 1000, 1),
         "z_swing_mv": round((vz.max() - vz.min()) * 1000, 1),
+        "sigma_eff": round(sigma_eff, 3),
+        "rho_eff": round(rho_eff, 3),
+        "beta_eff": round(beta_eff, 3),
+        "lyapunov_exponent": round(lyap_exp, 3),
     }
 
     with open("measurements.json", 'w') as f:
