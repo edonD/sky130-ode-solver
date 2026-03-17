@@ -120,6 +120,16 @@
 
 *Top: Transimpedance showing ideal 1/f integrator roll-off. Bottom: Voltage gain (Gm_ref × Z) with DC gain ~139 dB and UGF at ~3.1 MHz.*
 
+### Sinusoidal Response (Integration Verification)
+![Sinusoidal response](plots/sinusoidal_response.png)
+
+*1MHz 5µA sinusoidal current input. The output shows a cosine waveform (90-degree phase shift), confirming the integrator operates correctly. The output also ramps due to any DC offset in the input.*
+
+### Zoomed Charge Injection
+![Charge injection zoom](plots/charge_injection_zoom.png)
+
+*Zoomed view of the charge injection at reset release. The voltage kick is well within the ±5mV spec limits (red dashed lines). The TG complementary switching provides good NMOS/PMOS cancellation.*
+
 ## What Was Tried and Rejected
 
 | Attempt | Issue | Resolution |
