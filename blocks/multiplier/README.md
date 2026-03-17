@@ -4,11 +4,11 @@
 
 | Spec | Target | Measured | Margin | Pass/Fail |
 |------|--------|----------|--------|-----------|
-| Linearity Error | <5% | 1.51% | 3.49% margin | PASS |
-| K_mult | >0.5 V^-1 | 1.280 V^-1 | +156% | PASS |
+| Linearity Error | <5% | 1.05% | 3.95% margin | PASS |
+| K_mult | >0.5 V^-1 | 1.233 V^-1 | +147% | PASS |
 | Output Offset | <10 mV | 0.00 mV | 10 mV margin | PASS |
 | Bandwidth | >5 MHz | 1602 MHz | >>300x | PASS |
-| THD | <2% | 0.16% | 1.84% margin | PASS |
+| THD | <2% | 0.10% | 1.90% margin | PASS |
 | Power | <300 uW | 86 uW | 214 uW margin | PASS |
 
 ## Key Plots
@@ -43,10 +43,10 @@
 
 | Spec | Target | Worst Case | Corner | Margin | Pass/Fail |
 |------|--------|------------|--------|--------|-----------|
-| Linearity Error | <5% | 1.97% | sf/27C/1.62V | 3.03% | PASS |
-| K_mult | >0.5 V^-1 | 0.641 | fs/-40C/1.62V | +28% | PASS |
+| Linearity Error | <5% | 2.00% | fs/-40C/1.98V | 3.00% | PASS |
+| K_mult | >0.5 V^-1 | 0.643 | fs/-40C/1.62V | +29% | PASS |
 | Output Offset | <10 mV | 0.00 mV | All corners | 10 mV | PASS |
-| Power | <300 uW | 230 uW | sf/175C/1.98V | 70 uW | PASS |
+| Power | <300 uW | 213 uW | sf/175C/1.98V | 87 uW | PASS |
 
 ### PVT Sweep Plot
 ![PVT Sweep](plots/pvt_sweep.png)
@@ -102,7 +102,7 @@ A classic **NMOS Gilbert cell** with **resistive input attenuators** on both X a
 | vdd | Supply, 1.8V |
 | vss | Ground |
 
-**K_mult = 1.280 V^-1** (nominal, downstream blocks use this value)
+**K_mult = 1.233 V^-1** (nominal, downstream blocks use this value)
 
 ## Known Limitations
 
@@ -117,7 +117,7 @@ A classic **NMOS Gilbert cell** with **resistive input attenuators** on both X a
 | Parameter | Value | Description |
 |-----------|-------|-------------|
 | tail_w/l | 60u/1.5u | Tail current source |
-| bot_w/l | 20u/1u | Bottom pair (Y input) |
+| bot_w/l | 20u/1.5u | Bottom pair (Y input) |
 | top_w/l | 10u/0.3u | Top quad (X input) |
 | rload | 14 kOhm | Load resistors |
 | rdegen | 600 Ohm | Bottom pair degeneration |
@@ -137,3 +137,4 @@ A classic **NMOS Gilbert cell** with **resistive input attenuators** on both X a
 | 10 | 1.00 | 6/6 | Y atten 2.25:1, rdeg 600: linearity 2.48% |
 | 11 | 1.00 | 6/6 | vbias_n 0.64V: lin 2.28%, THD 0.28% |
 | 12 | 1.00 | 6/6 | top_l 0.5u->0.3u: lin 1.51%, THD 0.16%, all 45 PVT <2% |
+| 13 | 1.00 | 6/6 | bot_l 1u->1.5u: lin 1.05%, THD 0.10%, all PVT pass |
