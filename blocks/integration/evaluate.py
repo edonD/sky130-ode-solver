@@ -491,14 +491,27 @@ def plot_time_series(t, vx, vy, vz, plt):
     print("  Saved time_series.png")
 
 def plot_time_series_rk4(t, vx, vy, vz, rk4_traj, t_rk4, a_scale, plt):
-    """Time series overlaid with RK4 reference."""
-    fig, axes = plt.subplots(3, 1, figsize=(14, 8), sharex=True)
+    """Time series overlaid with RK4 reference — full view and zoomed."""
+    # Generate a longer RK4 for the full overlay
+    tau_L = T_LORENZ_US * 1e-6
+    t_lorenz = (t - t[0]) / tau_L
+
+    # Use settled start for IC matching
+    settle_idx = np.searchsorted(t, t[0] + 1e-6)
+    x0 = vx[settle_idx] / a_scale
+    y0 = vy[settle_idx] / a_scale
+    z0 = vz[settle_idx] / a_scale
+
+    dt_lor = 0.001
+    n_full = int(min(t_lorenz[-1], 80) / dt_lor)
+    rk4_full = lorenz_rk4(SIGMA, RHO, BETA, x0, y0, z0, dt_lor, n_full)
+    t_rk4_full_us = np.arange(n_full) * dt_lor * T_LORENZ_US + (t[settle_idx] - t[0]) * 1e6
 
     t_us = (t - t[0]) * 1e6
-    step = max(1, len(t) // 10000)
+    step = max(1, len(t) // 15000)
 
-    # RK4 time in µs
-    t_rk4_us = t_rk4 * T_LORENZ_US
+    # Full view
+    fig, axes = plt.subplots(3, 1, figsize=(14, 8), sharex=True)
 
     for ax, (sig, rk4_col, name, color) in zip(axes, [
         (vx, 0, 'x(t)', '#e74c3c'),
@@ -506,19 +519,45 @@ def plot_time_series_rk4(t, vx, vy, vz, rk4_traj, t_rk4, a_scale, plt):
         (vz, 2, 'z(t)', '#3498db'),
     ]):
         ax.plot(t_us[::step], sig[::step] * 1000, color=color, linewidth=0.5, label='Circuit')
-        ax.plot(t_rk4_us, rk4_traj[:, rk4_col] * a_scale * 1000, 'k--',
-                linewidth=0.8, alpha=0.6, label='RK4')
+        ax.plot(t_rk4_full_us, rk4_full[:, rk4_col] * a_scale * 1000, 'k--',
+                linewidth=0.6, alpha=0.5, label='RK4 ideal')
         ax.set_ylabel(f'{name} [mV]')
         ax.legend(loc='upper right')
         ax.grid(True, alpha=0.3)
 
     axes[-1].set_xlabel('Time [µs]')
-    axes[0].set_title('Circuit vs RK4 Reference', fontsize=13, fontweight='bold')
+    axes[0].set_title('Circuit vs RK4 Reference — Full Simulation', fontsize=13, fontweight='bold')
 
     fig.tight_layout()
     fig.savefig(PLOTS_DIR / 'time_series_rk4.png', bbox_inches='tight')
     plt.close(fig)
     print("  Saved time_series_rk4.png")
+
+    # Zoomed view: first 20 µs showing close match
+    fig, axes = plt.subplots(3, 1, figsize=(14, 7), sharex=True)
+    t_zoom = 25  # µs
+
+    for ax, (sig, rk4_col, name, color) in zip(axes, [
+        (vx, 0, 'x(t)', '#e74c3c'),
+        (vy, 1, 'y(t)', '#2ecc71'),
+        (vz, 2, 'z(t)', '#3498db'),
+    ]):
+        mask_c = t_us <= t_zoom
+        mask_r = t_rk4_full_us <= t_zoom
+        ax.plot(t_us[mask_c], sig[mask_c] * 1000, color=color, linewidth=1.0, label='Circuit')
+        ax.plot(t_rk4_full_us[mask_r], rk4_full[:, rk4_col][mask_r] * a_scale * 1000,
+                'k--', linewidth=1.0, alpha=0.7, label='RK4 ideal')
+        ax.set_ylabel(f'{name} [mV]')
+        ax.legend(loc='upper right')
+        ax.grid(True, alpha=0.3)
+
+    axes[-1].set_xlabel('Time [µs]')
+    axes[0].set_title('Circuit vs RK4 — Zoomed (first 10 Lorenz time units)', fontsize=13, fontweight='bold')
+
+    fig.tight_layout()
+    fig.savefig(PLOTS_DIR / 'time_series_rk4_zoom.png', bbox_inches='tight')
+    plt.close(fig)
+    print("  Saved time_series_rk4_zoom.png")
 
 def plot_3d_attractor(vx, vy, vz, plt):
     """3D Lorenz attractor projection on dark background."""
