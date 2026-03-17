@@ -1,0 +1,38 @@
+* Power
+.lib "sky130_models/sky130.lib.spice" tt
+.temp 24
+
+.subckt gm_cell inp inn outp outn vbias_n vbias_p vcm vdd vss
+
+XM1 outn inp s1 vss sky130_fd_pr__nfet_01v8 W=3.5e-05 L=1.8e-06
+XM2 outp inn s2 vss sky130_fd_pr__nfet_01v8 W=3.5e-05 L=1.8e-06
+
+Rs1 s1 ntail 4700
+Rs2 s2 ntail 4700
+
+XMT ntail vbias_n vss vss sky130_fd_pr__nfet_01v8 W=9e-05 L=5e-07
+
+XMP1 outn pcm vdd vdd sky130_fd_pr__pfet_01v8 W=2.5e-05 L=4e-06
+XMP2 outp pcm vdd vdd sky130_fd_pr__pfet_01v8 W=2.5e-05 L=4e-06
+
+* CMFB with RC filter for convergence (16MHz BW, plenty for 100kHz signal)
+Ecmfb pcm_int 0 VALUE={{V(vbias_p) + 20*((V(outp)+V(outn))/2 - V(vcm))}}
+Rcmfb pcm_int pcm 1k
+Ccmfb pcm 0 10p
+
+.ends gm_cell
+
+Xdut inp inn outp outn vbias_n vbias_p vcm vdd vss gm_cell
+Vdd vdd 0 1.8
+Vss vss 0 0
+Vcm vcm 0 0.9
+Vbias_n vbias_n 0 0.6
+Vbias_p vbias_p 0 1.2000000000000002
+Vinp inp 0 0.9
+Vinn inn 0 0.9
+.op
+.control
+run
+print -i(Vdd)
+.endc
+.end

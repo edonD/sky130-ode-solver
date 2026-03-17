@@ -5,3 +5,4 @@ step	commit	score	specs_met	notes
 4	best-margins	1.000	6/6	Li=1.5u Rs=4800: Gm=58.3 THD=0.81% Gain=44.6dB. Best margins.
 5	cascode-test	1.000	6/6	Tried NMOS cascode: worse (headroom). Sticking with simple topology.
 6	best-balanced	1.000	6/6	Li=1.7u Rs=4600: min margin 12.1%. Gm=59.4 THD=0.86% Gain=44.8dB
+7	final-opt	1.000	6/6	Li=1.8u Wl=25u Rs=4600: min margin 12.5%. Gain=45.0dB

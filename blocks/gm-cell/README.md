@@ -6,11 +6,11 @@ Programmable OTA (Operational Transconductance Amplifier) for the SKY130 analog 
 
 | Spec | Target | Measured | Margin | Status |
 |------|--------|----------|--------|--------|
-| gm_us | >50 µS | 59.4 | +18.8% | PASS |
-| gm_ratio | >30 | 53.7 | +79.1% | PASS |
-| thd_pct | <1% | 0.86% | +13.6% | PASS |
+| gm_us | >50 µS | 59.1 | +18.2% | PASS |
+| gm_ratio | >30 | 53.5 | +78.4% | PASS |
+| thd_pct | <1% | 0.85% | +14.6% | PASS |
 | bw_mhz | >10 MHz | >10 GHz | >>100% | PASS |
-| dc_gain_db | >40 dB | 44.8 dB | +12.1% | PASS |
+| dc_gain_db | >40 dB | 45.0 dB | +12.5% | PASS |
 | power_uw | <200 µW | 71 µW | +64.6% | PASS |
 
 ## Key Plots
@@ -48,8 +48,8 @@ PVT analysis at fixed Vbias_n = 0.6V. Green = passing, red = failing. The cold c
 | Parameter | Value | Description |
 |-----------|-------|-------------|
 | W_in | 35 µm | Input diff pair NMOS width |
-| L_in | 1.7 µm | Input diff pair NMOS length (long for gain + matching) |
-| W_load | 20 µm | PMOS load width |
+| L_in | 1.8 µm | Input diff pair NMOS length (long for gain + matching) |
+| W_load | 25 µm | PMOS load width |
 | L_load | 4 µm | PMOS load length (long for high ro) |
 | W_tail | 90 µm | Tail current source width |
 | L_tail | 0.5 µm | Tail current source length |
@@ -144,4 +144,5 @@ At nominal bias: Id ≈ 17 µA per side (total 35 µA), well within headroom.
 | 2 | 1.000 | 6/6 | Extended vbias_n range for ratio. All specs pass! |
 | 3 | 1.000 | 6/6 | Improved margins: Wi=35µ, Wt=90µ, Rs=5.2kΩ. Gm=56.6 (+13%) |
 | 4 | 1.000 | 6/6 | Li=1.5µ, Rs=4.8kΩ. Gm=58.3(+17%), Gain=44.6(+12%), THD=0.81% |
-| 5 | 1.000 | 6/6 | Best balanced: Li=1.7µ, Rs=4.6kΩ. Min margin=12.1% across all specs |
+| 5 | 1.000 | 6/6 | Li=1.7µ, Rs=4.6kΩ. Min margin=12.1% across all specs |
+| 6 | 1.000 | 6/6 | Final: Li=1.8µ, Wl=25µ, Rs=4.6kΩ. Min margin=12.5%. Gain=45dB |
