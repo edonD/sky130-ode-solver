@@ -27,15 +27,19 @@ DEBIAN_FRONTEND=noninteractive apt-get install -y \
   bison flex autoconf automake libtool
 
 # ============================================================
-# 2. ngspice 44 from source
+# 2. ngspice 45.2 from source (latest stable)
 # ============================================================
-echo "=== Building ngspice 44 ==="
+echo "=== Building ngspice 45.2 ==="
 cd /tmp
-wget -q https://sourceforge.net/projects/ngspice/files/ng-spice-rework/44/ngspice-44.tar.gz/download -O ngspice-44.tar.gz
-tar xzf ngspice-44.tar.gz
-cd ngspice-44
-mkdir -p release
-cd release
+wget -L "https://sourceforge.net/projects/ngspice/files/ng-spice-rework/45.2/ngspice-45.2.tar.gz/download" -O ngspice-45.2.tar.gz
+if [ ! -s ngspice-45.2.tar.gz ]; then
+  echo "ERROR: ngspice download failed, falling back to apt"
+  apt-get install -y ngspice
+else
+  tar xzf ngspice-45.2.tar.gz
+  cd ngspice-45.2
+  mkdir -p release
+  cd release
 ../configure \
   --with-readline=yes \
   --enable-xspice \
@@ -43,9 +47,10 @@ cd release
   --enable-openmp \
   --disable-debug \
   --prefix=/usr/local
-make -j16
-make install
-ldconfig
+  make -j16
+  make install
+  ldconfig
+fi
 
 # ============================================================
 # 3. Python packages

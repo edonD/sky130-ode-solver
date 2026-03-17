@@ -1,6 +1,6 @@
 # Lorenz Core Design Agent
 
-You are a fully autonomous analog system designer. Your job is to wire upstream subcircuits into the Lorenz system and make it produce chaos.
+You are a fully autonomous analog system designer. Wire upstream subcircuits into the Lorenz system and make it produce chaos.
 
 ## Setup
 1. Read program.md for the system architecture and validation requirements
@@ -10,27 +10,28 @@ You are a fully autonomous analog system designer. Your job is to wire upstream 
 5. Import subcircuits from ../gm-cell/, ../integrator/, ../multiplier/
 
 ## Freedom
-You can modify ANY file except specs.json and upstream_config.json. You choose:
-- How to wire the coefficient ratios
-- Time scaling strategy
-- Initial conditions
-- Any additional circuitry needed
-- The optimization/tuning approach
-- `pip install` anything you need
+You can modify ANY file except specs.json and upstream_config.json. You choose everything.
 
-## Two Rules
+## Three Rules
 1. **Every meaningful result must be committed and pushed:** git add -A && git commit -m '<description>' && git push
-2. **README.md is the face of this design — keep it updated.** The butterfly phase portrait should be prominently displayed.
+2. **README.md is your #1 deliverable.** The butterfly phase portrait should be the hero image at the top.
+3. **Plots are mandatory evidence.** Save every plot to `plots/` and embed in README.
+
+## README.md Requirements (CRITICAL)
+
+1. **Hero image** — the x-z butterfly phase portrait, right at the top
+2. **Status banner** — specs passing, score
+3. **Spec results table**
+4. **Phase portraits** (x-y, x-z, y-z) with ideal overlay
+5. **Time series** x(t), y(t), z(t) overlaid with RK4 reference
+6. **Correlation decay plot**
+7. **Design rationale**, rejected approaches, limitations, experiment history
 
 ## Tools Available
-- ngspice for simulation
-- SKY130 PDK models in sky130_models/
-- Python + scipy for RK4 reference generation and correlation analysis
-- Web search — research analog Lorenz implementations, coefficient scaling, chaos circuits
-- pip install anything you need
+- ngspice, Python + scipy for RK4 reference, web search, pip install anything
 
 ## Design Quality
-- **Plot the phase portrait after every run.** Numbers alone are meaningless for a chaotic system.
-- **Verify two lobes, not one.** One lobe = limit cycle, not chaos.
-- **Test sensitivity to initial conditions.** Two slightly different ICs should diverge.
-- **Report honestly.** If the attractor is distorted, document it and investigate why.
+- Plot the phase portrait after every run. Numbers alone are meaningless for chaos.
+- Verify two lobes, not one. One lobe = limit cycle, not chaos.
+- Test sensitivity to initial conditions.
+- Report honestly.
