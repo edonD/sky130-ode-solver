@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+_tmp_sim.cir
+linearity_results.csv
+bw_data.txt
+thd_data.txt
+bw_debug.txt
+bw_ext.txt
+bw_plot.txt
+test_out.csv
+sky130_fd_pr_models

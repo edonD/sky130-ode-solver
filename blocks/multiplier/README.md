@@ -25,6 +25,12 @@
 ### Frequency Response
 ![Bandwidth](plots/bandwidth.png)
 
+### Four-Quadrant Verification
+![Four Quadrant](plots/four_quadrant.png)
+
+### THD Waveform (100 kHz sine on X, DC on Y)
+![THD Waveform](plots/thd_waveform.png)
+
 ### Spec Compliance Summary
 ![Spec Summary](plots/spec_summary.png)
 
