@@ -152,6 +152,11 @@
 | LVT PFET | Not available at L=0.15µm in SKY130 (min L=1.5µm) | Used standard PFET (adequate overdrive) |
 | W=25u/50u with LVT | Passed 7/7 nominal but 29/45 PVT | Increased to 55u/99u → 45/45 PVT |
 
+### Integration Linearity
+![Linearity](plots/linearity.png)
+
+*Top: Integration ramp with 2µA constant current. Red dashed line shows linear fit. Max deviation from linearity: 0.01 mV over the full ±300mV swing range. MIM capacitors provide excellent linearity. Bottom: Residual error.*
+
 ### Time Constant Variation
 ![Tau PVT](plots/tau_pvt.png)
 
