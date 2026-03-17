@@ -7,3 +7,4 @@ step	commit	score	specs_met	notes
 11	0126e0e	1.000	6/6	Y atten 2.25:1, rdeg=600: 45/45 PVT, lin=2.48%, K=1.124, pwr=100uW
 12	397ce76	1.000	6/6	vbias_n=0.64V: 45/45 PVT, lin=2.28%, THD=0.28%, K=1.103, pwr=86uW
 13	70e2a7b	1.000	6/6	top_l=0.3u: 45/45 PVT all <2% lin, K=1.28, THD=0.16%, pwr=86uW
+14	eea640f	1.000	6/6	bot_l=1.5u: 45/45 PVT, lin=1.05%, THD=0.10%, K=1.233, pwr=86uW
