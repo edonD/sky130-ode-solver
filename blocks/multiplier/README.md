@@ -31,6 +31,9 @@
 ### THD Waveform + Spectrum
 ![THD Waveform](plots/thd_waveform.png)
 
+### Four-Quadrant Demo: Vx(100kHz) x Vy(30kHz)
+![Demo Waveform](plots/demo_waveform.png)
+
 ### Spec Compliance Summary
 ![Spec Summary](plots/spec_summary.png)
 
