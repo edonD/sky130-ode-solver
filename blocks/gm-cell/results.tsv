@@ -11,3 +11,5 @@ step	commit	score	specs_met	notes
 10	wi-40-wt-95	1.000	6/6	Wi=40u Wt=95u Li=3u Rs=4200: min margin 17.2%. Best overall.
 11	li-3.5-wi-45	1.000	6/6	Wi=45u Li=3.5u Wt=95u Rs=4200: min margin 18.4%. Gain=47.3dB. Best.
 12	li-4.0-wi-45	1.000	6/6	Wi=45u Li=4.0u Rs=4100: min margin 19.1%. Gain=47.6dB. THD=0.79%. Best.
+13	triode-deg	1.000	6/6	Tried triode MOSFET degeneration: no improvement over resistors
+14	stability	1.000	6/6	50+ random perturbations confirmed stable optimum at 19.1% min margin
