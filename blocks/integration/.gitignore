@@ -1,0 +1,5 @@
+data_*.txt
+sim_*.cir
+run.log
+results.tsv
+*.raw
