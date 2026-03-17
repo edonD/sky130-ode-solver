@@ -1,8 +1,8 @@
 name,value
 W_in,3.5e-05
-L_in,1.8e-06
+L_in,2.2e-06
 W_load,2.5e-05
 L_load,4e-06
 W_tail,9e-05
 L_tail,5e-07
-Rs_deg,4600
+Rs_deg,4500

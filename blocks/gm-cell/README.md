@@ -6,12 +6,12 @@ Programmable OTA (Operational Transconductance Amplifier) for the SKY130 analog 
 
 | Spec | Target | Measured | Margin | Status |
 |------|--------|----------|--------|--------|
-| gm_us | >50 µS | 59.1 | +18.2% | PASS |
+| gm_us | >50 µS | 58.7 | +17.4% | PASS |
 | gm_ratio | >30 | 53.5 | +78.4% | PASS |
-| thd_pct | <1% | 0.85% | +14.6% | PASS |
+| thd_pct | <1% | 0.85% | +15.3% | PASS |
 | bw_mhz | >10 MHz | >10 GHz | >>100% | PASS |
-| dc_gain_db | >40 dB | 45.0 dB | +12.5% | PASS |
-| power_uw | <200 µW | 71 µW | +64.6% | PASS |
+| dc_gain_db | >40 dB | 45.7 dB | +14.1% | PASS |
+| power_uw | <200 µW | 70 µW | +64.8% | PASS |
 
 ## Key Plots
 
@@ -48,12 +48,12 @@ PVT analysis at fixed Vbias_n = 0.6V. Green = passing, red = failing. The cold c
 | Parameter | Value | Description |
 |-----------|-------|-------------|
 | W_in | 35 µm | Input diff pair NMOS width |
-| L_in | 1.8 µm | Input diff pair NMOS length (long for gain + matching) |
+| L_in | 2.2 µm | Input diff pair NMOS length (long for gain + matching) |
 | W_load | 25 µm | PMOS load width |
 | L_load | 4 µm | PMOS load length (long for high ro) |
 | W_tail | 90 µm | Tail current source width |
 | L_tail | 0.5 µm | Tail current source length |
-| Rs_deg | 4.6 kΩ | Source degeneration resistor (each side) |
+| Rs_deg | 4.5 kΩ | Source degeneration resistor (each side) |
 
 ## Design Rationale
 
@@ -119,7 +119,7 @@ At nominal bias: Id ≈ 17 µA per side (total 35 µA), well within headroom.
 
 ## Known Limitations
 
-1. **Gm margin is good**: Gm = 58.3 µS vs 50 µS target (+16.6% margin). PVT corners (especially cold/fs) will reduce Gm; the bias generator must track temperature.
+1. **All margins >14%**: The weakest spec (gain at 45.7dB) still has 14.1% margin. PVT corners (especially cold/fs) will reduce performance; the bias generator must track temperature.
 
 2. **DC gain margin is moderate**: 43.8 dB vs 40 dB (+9.5%). At high temperature or slow process corners, gain may drop.
 
@@ -145,4 +145,5 @@ At nominal bias: Id ≈ 17 µA per side (total 35 µA), well within headroom.
 | 3 | 1.000 | 6/6 | Improved margins: Wi=35µ, Wt=90µ, Rs=5.2kΩ. Gm=56.6 (+13%) |
 | 4 | 1.000 | 6/6 | Li=1.5µ, Rs=4.8kΩ. Gm=58.3(+17%), Gain=44.6(+12%), THD=0.81% |
 | 5 | 1.000 | 6/6 | Li=1.7µ, Rs=4.6kΩ. Min margin=12.1% across all specs |
-| 6 | 1.000 | 6/6 | Final: Li=1.8µ, Wl=25µ, Rs=4.6kΩ. Min margin=12.5%. Gain=45dB |
+| 6 | 1.000 | 6/6 | Li=1.8µ, Wl=25µ, Rs=4.6kΩ. Min margin=12.5%. Gain=45dB |
+| 7 | 1.000 | 6/6 | Final: Li=2.2µ, Rs=4.5kΩ. Min margin=14.1%. Gain=45.7dB. Best overall. |
