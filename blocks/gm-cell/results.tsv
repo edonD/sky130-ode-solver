@@ -13,3 +13,5 @@ step	commit	score	specs_met	notes
 12	li-4.0-wi-45	1.000	6/6	Wi=45u Li=4.0u Rs=4100: min margin 19.1%. Gain=47.6dB. THD=0.79%. Best.
 13	triode-deg	1.000	6/6	Tried triode MOSFET degeneration: no improvement over resistors
 14	stability	1.000	6/6	50+ random perturbations confirmed stable optimum at 19.1% min margin
+15	multi-tanh	-	-	Tried multi-tanh: worse THD (4%). Simple topology is optimal.
+16	converged	1.000	6/6	Design converged. 400+ evals. No improvement possible with simple topology.
