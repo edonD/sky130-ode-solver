@@ -34,6 +34,9 @@
 ### Four-Quadrant Demo: Vx(100kHz) x Vy(30kHz)
 ![Demo Waveform](plots/demo_waveform.png)
 
+### Startup Transient (5ns settling)
+![Startup](plots/startup.png)
+
 ### Spec Compliance Summary
 ![Spec Summary](plots/spec_summary.png)
 
