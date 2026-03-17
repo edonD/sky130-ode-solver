@@ -75,7 +75,7 @@ def measure_corner(corner, temp, vdd):
 Vdd vdd 0 {vdd}
 Vss vss 0 0
 Vcm vcm 0 {VCM}
-Vbias_n vbias_n 0 0.65
+Vbias_n vbias_n 0 0.64
 Vbias_p vbias_p 0 {vdd - 0.5}
 Vxp xp 0 dc {VCM}
 Vxn xn 0 dc {VCM}
@@ -137,7 +137,7 @@ Xmult xp xn yp yn outp outn vbias_n vbias_p vcm vdd vss multiplier
 Vdd vdd 0 {vdd}
 Vss vss 0 0
 Vcm vcm 0 {VCM}
-Vbias_n vbias_n 0 0.65
+Vbias_n vbias_n 0 0.64
 Vbias_p vbias_p 0 {vdd - 0.5}
 Vxp xp 0 dc {VCM}
 Vxn xn 0 dc {VCM}

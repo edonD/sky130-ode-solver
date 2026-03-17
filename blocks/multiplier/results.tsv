@@ -4,3 +4,4 @@ step	commit	score	specs_met	notes
 8	2f33b5c	1.000	6/6	tail_w=60u: all margins improved, worst pwr=265uW, worst K=0.674
 9	b16e7d9	1.000	6/6	Full 45-corner PVT: all pass, worst K=0.671, worst pwr=265uW
 10	e424cee	1.000	6/6	tail_l=1.5u: 45/45 PVT, worst pwr=224uW, worst K=0.674, worst lin=2.83%
+11	0126e0e	1.000	6/6	Y atten 2.25:1, rdeg=600: 45/45 PVT, lin=2.48%, K=1.124, pwr=100uW

@@ -108,7 +108,7 @@ def measure_dc_linearity(corner="tt", temp=27, vdd=1.8) -> Dict:
 Vdd vdd 0 {vdd}
 Vss vss 0 0
 Vcm vcm 0 {VCM}
-Vbias_n vbias_n 0 0.65
+Vbias_n vbias_n 0 0.64
 Vbias_p vbias_p 0 {vdd - 0.5}
 
 Vxp xp 0 dc {VCM}
@@ -199,7 +199,7 @@ def measure_bandwidth(corner="tt", temp=27, vdd=1.8) -> float:
 Vdd vdd 0 {vdd}
 Vss vss 0 0
 Vcm vcm 0 {VCM}
-Vbias_n vbias_n 0 0.65
+Vbias_n vbias_n 0 0.64
 Vbias_p vbias_p 0 {vdd - 0.5}
 
 Vyp yp 0 dc {VCM + 0.1}
@@ -271,7 +271,7 @@ def measure_thd(corner="tt", temp=27, vdd=1.8) -> float:
 Vdd vdd 0 {vdd}
 Vss vss 0 0
 Vcm vcm 0 {VCM}
-Vbias_n vbias_n 0 0.65
+Vbias_n vbias_n 0 0.64
 Vbias_p vbias_p 0 {vdd - 0.5}
 
 Vyp yp 0 dc {VCM + 0.1}
@@ -328,7 +328,7 @@ def measure_power(corner="tt", temp=27, vdd=1.8) -> float:
 Vdd vdd 0 {vdd}
 Vss vss 0 0
 Vcm vcm 0 {VCM}
-Vbias_n vbias_n 0 0.65
+Vbias_n vbias_n 0 0.64
 Vbias_p vbias_p 0 {vdd - 0.5}
 
 Vxp xp 0 dc {VCM}
@@ -440,7 +440,7 @@ def generate_plots(lin_data: Dict, measurements: Dict):
 Vdd vdd 0 1.8
 Vss vss 0 0
 Vcm vcm 0 {VCM}
-Vbias_n vbias_n 0 0.65
+Vbias_n vbias_n 0 0.64
 Vbias_p vbias_p 0 1.3
 Vyp yp 0 dc {VCM + 0.1}
 Vyn yn 0 dc {VCM - 0.1}
