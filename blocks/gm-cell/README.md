@@ -6,12 +6,12 @@ Programmable OTA (Operational Transconductance Amplifier) for the SKY130 analog 
 
 | Spec | Target | Measured | Margin | Status |
 |------|--------|----------|--------|--------|
-| gm_us | >50 µS | 52.5 | +4.9% | PASS |
-| gm_ratio | >30 | 52.5 | +74.9% | PASS |
-| thd_pct | <1% | 0.84% | +16.3% | PASS |
+| gm_us | >50 µS | 56.6 | +13.2% | PASS |
+| gm_ratio | >30 | 49.6 | +65.5% | PASS |
+| thd_pct | <1% | 0.73% | +27.0% | PASS |
 | bw_mhz | >10 MHz | >10 GHz | >>100% | PASS |
-| dc_gain_db | >40 dB | 43.8 dB | +9.5% | PASS |
-| power_uw | <200 µW | 63 µW | +68.5% | PASS |
+| dc_gain_db | >40 dB | 43.7 dB | +9.3% | PASS |
+| power_uw | <200 µW | 71 µW | +64.5% | PASS |
 
 ## Key Plots
 
@@ -39,13 +39,13 @@ Transient response with ±200mV differential sinusoidal input at 100kHz into a 1
 
 | Parameter | Value | Description |
 |-----------|-------|-------------|
-| W_in | 30 µm | Input diff pair NMOS width |
+| W_in | 35 µm | Input diff pair NMOS width |
 | L_in | 1 µm | Input diff pair NMOS length |
 | W_load | 20 µm | PMOS load width |
 | L_load | 4 µm | PMOS load length (long for high ro) |
-| W_tail | 80 µm | Tail current source width |
+| W_tail | 90 µm | Tail current source width |
 | L_tail | 0.5 µm | Tail current source length |
-| Rs_deg | 5.5 kΩ | Source degeneration resistor (each side) |
+| Rs_deg | 5.2 kΩ | Source degeneration resistor (each side) |
 
 ## Design Rationale
 
@@ -111,7 +111,7 @@ At nominal bias: Id ≈ 17 µA per side (total 35 µA), well within headroom.
 
 ## Known Limitations
 
-1. **Gm margin is slim**: Gm = 52.5 µS vs 50 µS target (+4.9% margin). PVT corners may push this below spec. The degeneration resistor Rs could be slightly reduced to 5 kΩ for more Gm margin, at the cost of higher THD (~1.1%).
+1. **Gm margin is moderate**: Gm = 56.6 µS vs 50 µS target (+13.2% margin). PVT corners may still push this below spec at worst case.
 
 2. **DC gain margin is moderate**: 43.8 dB vs 40 dB (+9.5%). At high temperature or slow process corners, gain may drop.
 
@@ -127,3 +127,4 @@ At nominal bias: Id ≈ 17 µA per side (total 35 µA), well within headroom.
 |------|-------|-----------|-------|
 | 1 | 0.800 | 5/6 | Rs=5500, L_in=1µ. Gm ratio failing (19.6x) |
 | 2 | 1.000 | 6/6 | Extended vbias_n range for ratio. All specs pass! |
+| 3 | 1.000 | 6/6 | Improved margins: Wi=35µ, Wt=90µ, Rs=5.2kΩ. Gm=56.6 (+13%) |

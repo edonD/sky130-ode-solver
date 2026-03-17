@@ -1,3 +1,4 @@
 step	commit	score	specs_met	notes
 1	pre-opt	0.800	5/6	Rs=5500 Li=1u: 5/6 specs, Gm_ratio failing
 2	all-pass	1.000	6/6	All specs passing! Rs=5500 Li=1u Ll=4u. Extended vbias range for ratio.
+3	margin-improve	1.000	6/6	Improved margins: Wi=35u Wt=90u Rs=5200. Gm=56.6 THD=0.73%
