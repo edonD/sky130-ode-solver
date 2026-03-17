@@ -1,51 +1,31 @@
-* SKY130 Programmable OTA (Gm Cell)
-* Fully differential source-degenerated OTA with ideal CMFB
-*
-* Topology: Source-degenerated NMOS diff pair + PMOS current source loads
-* Linearization: Resistive source degeneration extends linear input range
-* Programmability: Tail current (vbias_n) controls Gm
-* CMFB: Ideal behavioral feedback to stabilize output common mode
+* SKY130 Programmable OTA (Gm Cell) — Optimized
+* Source-degenerated NMOS diff pair + PMOS loads + ideal CMFB
 *
 * Required interface:
 *   .subckt gm_cell inp inn outp outn vbias_n vbias_p vcm vdd vss
 
 .subckt gm_cell inp inn outp outn vbias_n vbias_p vcm vdd vss
 
-* Design parameters (overridden by optimizer)
-.param W_in=5u L_in=0.5u
-.param W_load=8u L_load=1u
-.param W_tail=10u L_tail=1u
-.param Rs_deg=2000
+* Optimized parameters
+.param W_in=3e-05
+.param L_in=1e-06
+.param W_load=2e-05
+.param L_load=4e-06
+.param W_tail=8e-05
+.param L_tail=5e-07
+.param Rs_deg=5500
 
-* ----------------------------------------------------------------
-* Input differential pair with source degeneration
-* ----------------------------------------------------------------
-* M1: inp controls current into outn node
-* M2: inn controls current into outp node
 XM1 outn inp s1 vss sky130_fd_pr__nfet_01v8 W={W_in} L={L_in}
 XM2 outp inn s2 vss sky130_fd_pr__nfet_01v8 W={W_in} L={L_in}
 
-* Source degeneration resistors for linearity
-* Gm_eff = gm / (1 + gm*Rs_deg) → linearizes transfer characteristic
 Rs1 s1 ntail {Rs_deg}
 Rs2 s2 ntail {Rs_deg}
 
-* ----------------------------------------------------------------
-* Tail current source (programmable via vbias_n)
-* ----------------------------------------------------------------
 XMT ntail vbias_n vss vss sky130_fd_pr__nfet_01v8 W={W_tail} L={L_tail}
 
-* ----------------------------------------------------------------
-* PMOS active loads (current sources, gate driven by CMFB)
-* ----------------------------------------------------------------
 XMP1 outn pcm vdd vdd sky130_fd_pr__pfet_01v8 W={W_load} L={L_load}
 XMP2 outp pcm vdd vdd sky130_fd_pr__pfet_01v8 W={W_load} L={L_load}
 
-* ----------------------------------------------------------------
-* Common-mode feedback (ideal behavioral)
-* Senses output CM, compares to VCM target, adjusts PMOS gate
-* Polarity: output CM too high → pcm rises → less PMOS current → output drops
-* ----------------------------------------------------------------
 Ecmfb pcm 0 VALUE={V(vbias_p) + 50*((V(outp)+V(outn))/2 - V(vcm))}
 
 .ends gm_cell
