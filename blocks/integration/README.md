@@ -222,8 +222,11 @@ The rho calibration compensates for the multiplier x*z term being ~20% stronger 
 
 ## Experiment History
 
-| Step | Score | Specs | Corr | PVT | Key Change |
-|------|-------|-------|------|-----|------------|
-| 1 | 0.667 | 4/6 | 0.781 | 67% | Initial: resistive VCM, vbn=0.64 |
-| 2 | 0.833 | 5/6 | 0.785 | 100% | VCM behavioral + vbn=0.70 |
-| 3 | **1.000** | **6/6** | **0.909** | **93%** | Reverted vbn=0.64, x-only correlation, a_scale from peak |
+| Step | Score | Specs | Corr | PVT | Chaos LTU | Key Change |
+|------|-------|-------|------|-----|-----------|------------|
+| 1 | 0.667 | 4/6 | 0.781 | 67% | 77.7 | Initial: resistive VCM, vbn=0.64 |
+| 2 | 0.833 | 5/6 | 0.785 | 100% | 77.7 | VCM behavioral + vbn=0.70 |
+| 3 | 1.000 | 6/6 | 0.909 | 93% | 77.7 | Reverted vbn=0.64, x-only correlation |
+| 4 | 0.833 | 5/6 | 0.872 | 100% | -- | Tried vbn=0.66: PVT perfect but correlation fails |
+| 5 | 1.000 | 6/6 | 0.900 | 93% | 77.7 | Tried gm_rho=35: marginal, reverted to 33.5 |
+| 6 | **1.000** | **6/6** | **0.909** | **93%** | **155.7** | Extended sim 400us, dark plots, bifurcation analysis |
