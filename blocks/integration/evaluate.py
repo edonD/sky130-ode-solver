@@ -386,27 +386,45 @@ def setup_matplotlib():
     return plt
 
 def plot_butterfly_hero(t, vx, vz, plt):
-    """Hero image: x-z butterfly attractor."""
-    fig, ax = plt.subplots(1, 1, figsize=(10, 8))
+    """Hero image: x-z butterfly attractor on dark background."""
+    fig, ax = plt.subplots(1, 1, figsize=(12, 9), facecolor='#0a0a1a')
+    ax.set_facecolor('#0a0a1a')
 
-    # Color by time for beautiful gradient
     n = len(vx)
-    colors = plt.cm.inferno(np.linspace(0.1, 0.95, n))
+    step = max(1, n // 30000)
+    xm = vx[::step] * 1000
+    zm = vz[::step] * 1000
+    nn = len(xm)
 
-    # Plot as scatter with small points for density
-    step = max(1, n // 20000)
-    ax.scatter(vx[::step] * 1000, vz[::step] * 1000,
-              c=np.linspace(0, 1, len(vx[::step])), cmap='inferno',
-              s=0.3, alpha=0.7, rasterized=True)
+    # Multi-layer approach: plot line segments colored by time
+    for i in range(0, nn - 1, 1):
+        frac = i / nn
+        color = plt.cm.plasma(0.15 + 0.7 * frac)
+        ax.plot(xm[i:i+2], zm[i:i+2], '-', color=color, linewidth=0.3, alpha=0.6)
 
-    ax.set_xlabel('x(t) [mV differential]', fontsize=13)
-    ax.set_ylabel('z(t) [mV differential]', fontsize=13)
-    ax.set_title('Lorenz Strange Attractor — SKY130 Analog Computer', fontsize=15, fontweight='bold')
-    ax.set_aspect('equal', adjustable='datalim')
-    ax.grid(True, alpha=0.2)
+    # Add faint glow with larger scatter
+    step2 = max(1, n // 5000)
+    ax.scatter(vx[::step2] * 1000, vz[::step2] * 1000,
+              c=np.linspace(0.15, 0.85, len(vx[::step2])), cmap='plasma',
+              s=2, alpha=0.08, rasterized=True)
+
+    ax.set_xlabel('x(t) [mV differential]', fontsize=14, color='#cccccc')
+    ax.set_ylabel('z(t) [mV differential]', fontsize=14, color='#cccccc')
+    ax.set_title('Lorenz Strange Attractor\nSKY130 130nm CMOS Analog Computer',
+                fontsize=17, fontweight='bold', color='white', pad=15)
+    ax.tick_params(colors='#888888')
+    ax.spines['bottom'].set_color('#333333')
+    ax.spines['left'].set_color('#333333')
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.grid(True, alpha=0.1, color='#444444')
+
+    # Add annotation
+    ax.text(0.02, 0.02, f'P = 171 µW  |  390,000× real-time  |  42/45 PVT corners',
+           transform=ax.transAxes, fontsize=9, color='#666666', family='monospace')
 
     fig.tight_layout()
-    fig.savefig(PLOTS_DIR / 'butterfly_hero.png', bbox_inches='tight')
+    fig.savefig(PLOTS_DIR / 'butterfly_hero.png', bbox_inches='tight', facecolor=fig.get_facecolor())
     plt.close(fig)
     print("  Saved butterfly_hero.png")
 
@@ -503,26 +521,38 @@ def plot_time_series_rk4(t, vx, vy, vz, rk4_traj, t_rk4, a_scale, plt):
     print("  Saved time_series_rk4.png")
 
 def plot_3d_attractor(vx, vy, vz, plt):
-    """3D Lorenz attractor projection."""
+    """3D Lorenz attractor projection on dark background."""
     from mpl_toolkits.mplot3d import Axes3D
 
-    fig = plt.figure(figsize=(10, 8))
-    ax = fig.add_subplot(111, projection='3d')
+    fig = plt.figure(figsize=(11, 9), facecolor='#0a0a1a')
+    ax = fig.add_subplot(111, projection='3d', facecolor='#0a0a1a')
 
-    step = max(1, len(vx) // 15000)
-    n = len(vx[::step])
+    step = max(1, len(vx) // 20000)
+    xm = vx[::step] * 1000
+    ym = vy[::step] * 1000
+    zm = vz[::step] * 1000
+    n = len(xm)
 
-    ax.scatter(vx[::step] * 1000, vy[::step] * 1000, vz[::step] * 1000,
-              c=np.linspace(0, 1, n), cmap='plasma', s=0.3, alpha=0.5, rasterized=True)
+    ax.scatter(xm, ym, zm, c=np.linspace(0.1, 0.9, n), cmap='plasma',
+              s=0.4, alpha=0.5, rasterized=True)
 
-    ax.set_xlabel('x [mV]')
-    ax.set_ylabel('y [mV]')
-    ax.set_zlabel('z [mV]')
-    ax.set_title('3D Lorenz Attractor — SKY130 Analog Computer', fontsize=13, fontweight='bold')
+    ax.set_xlabel('x [mV]', color='#aaaaaa', labelpad=8)
+    ax.set_ylabel('y [mV]', color='#aaaaaa', labelpad=8)
+    ax.set_zlabel('z [mV]', color='#aaaaaa', labelpad=8)
+    ax.set_title('3D Lorenz Attractor\nSKY130 Analog Computer',
+                fontsize=14, fontweight='bold', color='white', pad=15)
+    ax.tick_params(colors='#666666')
     ax.view_init(elev=25, azim=135)
+    ax.xaxis.pane.fill = False
+    ax.yaxis.pane.fill = False
+    ax.zaxis.pane.fill = False
+    ax.xaxis.pane.set_edgecolor('#222222')
+    ax.yaxis.pane.set_edgecolor('#222222')
+    ax.zaxis.pane.set_edgecolor('#222222')
+    ax.grid(True, alpha=0.15)
 
     fig.tight_layout()
-    fig.savefig(PLOTS_DIR / '3d_attractor.png', bbox_inches='tight')
+    fig.savefig(PLOTS_DIR / '3d_attractor.png', bbox_inches='tight', facecolor=fig.get_facecolor())
     plt.close(fig)
     print("  Saved 3d_attractor.png")
 
