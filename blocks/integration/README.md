@@ -72,6 +72,12 @@ The positive Lyapunov exponent confirms the system is genuinely chaotic, with ne
 
 *Chaos survival across all 45 PVT corners (5 process x 3 temperature x 3 supply voltage). Green = chaos sustained, Red = collapsed. 42/45 corners (93.3%) sustain chaotic oscillation. The 3 failing corners are all at VDD=1.62V with slow NMOS process (fs at -40C/27C/175C), where reduced multiplier gain weakens the nonlinear coupling below the threshold for chaos.*
 
+## PVT Corner Attractors
+
+![PVT Attractors](plots/pvt_attractors.png)
+
+*x-z phase portraits at 6 selected PVT corners. Nominal (tt/27C/1.8V) shows the classic butterfly. At extreme corners, the attractor shape changes significantly — the ss/-40C/1.62V corner shows a stretched attractor with larger z-excursion, while ff/175C/1.98V shows a tighter, faster attractor. The fs/27C/1.62V corner (which fails in 80us PVT sweep) actually sustains chaos at longer simulation times but with dramatically different scaling. All corners that pass maintain the two-lobed butterfly topology despite amplitude and shape variations.*
+
 ## Raw Node Voltages
 
 ![Raw Voltages](plots/raw_voltages.png)
