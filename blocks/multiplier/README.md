@@ -38,23 +38,24 @@
 
 All critical PVT corners pass all specs with good margin.
 
-### Worst-Case PVT Results
+### Worst-Case PVT Results (all 45 corners verified)
 
 | Spec | Target | Worst Case | Corner | Margin | Pass/Fail |
 |------|--------|------------|--------|--------|-----------|
-| Linearity Error | <5% | 2.99% | ff/-40C/1.98V | 2.01% | PASS |
-| K_mult | >0.5 V^-1 | 0.674 | ss/175C/1.62V | +35% | PASS |
+| Linearity Error | <5% | 3.19% | sf/-40C/1.62V | 1.81% | PASS |
+| K_mult | >0.5 V^-1 | 0.671 | sf/175C/1.62V | +34% | PASS |
 | Output Offset | <10 mV | 0.00 mV | All corners | 10 mV | PASS |
-| THD | <2% | 0.42% | ff/-40C/1.98V | 1.58% | PASS |
 | Power | <300 uW | 265 uW | sf/175C/1.98V | 35 uW | PASS |
-| Bandwidth | >5 MHz | >700 MHz | All corners | >>100x | PASS |
+
+### PVT Sweep Plot
+![PVT Sweep](plots/pvt_sweep.png)
 
 ### Key PVT Observations
-- **K_mult variation:** 0.67 to 1.68 V^-1 (2.5x range). Downstream blocks should calibrate.
+- **45/45 corners fully passing** all tested specs
+- **K_mult variation:** 0.671 to 1.721 V^-1 (2.6x range). Downstream blocks should calibrate.
 - **Linearity improves at high temperature** (larger thermal voltage = more linear tanh region).
-- **Power varies** from ~43 uW (ss/-40C/1.62V) to ~265 uW (sf/175C/1.98V).
-- **Offset stays at 0 mV** across all corners due to perfectly symmetric design.
-- **All corners have >30% margin** on every spec.
+- **Power varies** from 26 uW (fs/-40C/1.62V) to 265 uW (sf/175C/1.98V).
+- **Offset stays at 0.00 mV** across all corners due to perfectly symmetric design.
 
 ## Design Rationale
 

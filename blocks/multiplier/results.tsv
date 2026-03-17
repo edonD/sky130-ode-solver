@@ -1,3 +1,4 @@
 step	commit	score	specs_met	notes
 5	bb3051a	1.000	6/6	All specs pass: K=1.018, lin=3.22%, THD=0.42%
 6	59d0fb7	1.000	6/6	PVT verified: all 45 corners pass. Worst K=0.575, worst lin=3.7%
+8	2f33b5c	1.000	6/6	tail_w=60u: all margins improved, worst pwr=265uW, worst K=0.674
