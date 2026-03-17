@@ -1,0 +1,11 @@
+{
+  "lorenz_core": {
+    "t_lorenz_us": 2.565,
+    "trajectory_correlation": 0.9190234269891975,
+    "power_mw": 0.5408999999999999,
+    "x_swing_mv": 619.490642,
+    "y_swing_mv": 906.400408,
+    "z_swing_mv": 780.9905019999999,
+    "source": "C:\\Users\\DD\\OneDrive\\Programming\\willAI\\sky130-ode-solver\\blocks\\lorenz-core\\measurements.json"
+  }
+}

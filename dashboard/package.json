@@ -1,0 +1,16 @@
+{
+  "name": "ode-solver-dashboard",
+  "version": "1.0.0",
+  "description": "Web dashboard for deploying and monitoring autonomous analog design agents",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.0",
+    "ws": "^8.18.0",
+    "ssh2": "^1.16.0",
+    "marked": "^15.0.0"
+  }
+}
