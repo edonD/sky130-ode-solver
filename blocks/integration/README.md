@@ -42,6 +42,12 @@ The positive Lyapunov exponent confirms the system is genuinely chaotic, with ne
 
 *Circuit output (color) overlaid with ideal RK4 numerical reference (black dashed). Trajectories match closely for the first ~5 Lyapunov times (~14 us), achieving 0.909 correlation. Beyond this, exponential divergence due to sensitive dependence on initial conditions causes the trajectories to decorrelate -- as expected for any chaotic system. The attractor topology (amplitude envelope, switching frequency) remains correct throughout.*
 
+### Zoomed RK4 Comparison (First 10 Lorenz Time Units)
+
+![RK4 Zoom](plots/time_series_rk4_zoom.png)
+
+*Zoomed view showing the first 25 us (~10 Lorenz time units). The circuit and ideal RK4 trajectories are nearly identical for the first ~5 us (2 LTU), match well through ~13 us (5 LTU), and begin diverging around 15 us -- consistent with a Lyapunov exponent of ~0.49 per LTU. This divergence is the hallmark of chaos: even infinitesimally close initial conditions produce exponentially different trajectories.*
+
 ## Phase Portraits
 
 ![Phase Portraits](plots/phase_portraits.png)
