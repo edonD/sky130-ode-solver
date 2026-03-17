@@ -365,7 +365,7 @@ print -i(Vdd)
 
 def measure_gm_ratio(params, corner="tt", temp=24, vdd=1.8, rload=10000):
     vcm = vdd / 2
-    vbias_list = [0.42, 0.45, 0.50, 0.55, 0.60, 0.70, 0.80, 0.90, 1.0, 1.1, 1.2]
+    vbias_list = [0.38, 0.40, 0.42, 0.45, 0.50, 0.55, 0.60, 0.70, 0.80, 0.90, 1.0, 1.1, 1.2, 1.4, 1.6]
     gm_vals = []
     for vbn in vbias_list:
         tb = f"""* Gm ratio
